@@ -58,7 +58,7 @@ execute `compilar_windows.bat` no terminal com o `g++` no PATH para
 gerar os tres arquivos `.exe` em `bin/` e executar os testes.
 O projeto nao depende de bibliotecas externas, somente de C++17 e threads.
 
-## API alinhada ao projeto da Sprint 2
+## API alinhada a Sprint 2
 
 `services.h` e `services.cpp` separam as operacoes entre as classes:
 
