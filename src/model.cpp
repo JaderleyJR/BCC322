@@ -1,3 +1,6 @@
+/** @file model.cpp
+ * @brief Implementacao das classes do dominio.
+ */
 #include "model.h"
 
 #include <cmath>
@@ -58,16 +61,26 @@ Oferta::Oferta(const Oferta& outra) = default;
 Oferta& Oferta::operator=(const Oferta& outra) = default;
 Oferta::~Oferta() = default;
 bool Oferta::valida() const {
-    return id_ > 0 && idRestaurante_ > 0 && !descricao_.empty() &&
+    return id_ > 0 && idRestaurante_ > 0 && descricao_.find_first_not_of(" \t\r\n") != std::string::npos &&
            quantidadeTotal_ > 0 && std::isfinite(pesoTotalKg_) &&
            pesoTotalKg_ > 0.0 && std::isfinite(precoUnitario_) &&
-           precoUnitario_ > 0.0 && !janelaRetirada_.empty();
+           precoUnitario_ > 0.0 && janelaRetirada_.find_first_not_of(" \t\r\n") != std::string::npos;
 }
 bool Oferta::reservar(int quantidade) {
-    if (!ativa_ || quantidade <= 0 || quantidade > quantidadeDisponivel_) {
+    if (!valida() || !ativa_ || quantidade <= 0 || quantidade > quantidadeDisponivel_) {
         return false;
     }
     quantidadeDisponivel_ -= quantidade;
+    return true;
+}
+// Restaura somente unidades que estavam reservadas.
+bool Oferta::restaurarDisponibilidade(int quantidade) {
+    if (!valida() || quantidadeDisponivel_ < 0 ||
+        quantidadeDisponivel_ > quantidadeTotal_ || quantidade <= 0 ||
+        quantidade > quantidadeTotal_ - quantidadeDisponivel_) {
+        return false;
+    }
+    quantidadeDisponivel_ += quantidade;
     return true;
 }
 int Oferta::id() const { return id_; }
@@ -85,23 +98,39 @@ bool Oferta::estaAtiva() const { return ativa_ && quantidadeDisponivel_ > 0; }
 
 Reserva::Reserva()
     : id_(0), idOferta_(0), idConsumidor_(0), quantidadeReservada_(0),
-      quantidadeRetirada_(0), valorRecebido_(0.0), retiradaConfirmada_(false) {}
+      quantidadeRetirada_(0), valorRecebido_(0.0), pesoAproveitadoKg_(0.0),
+      situacao_(EstadoReserva::Pendente) {}
 Reserva::Reserva(int id, int idOferta, int idConsumidor, int quantidade)
     : id_(id), idOferta_(idOferta), idConsumidor_(idConsumidor),
       quantidadeReservada_(quantidade), quantidadeRetirada_(0),
-      valorRecebido_(0.0), retiradaConfirmada_(false) {}
+      valorRecebido_(0.0), pesoAproveitadoKg_(0.0),
+      situacao_(EstadoReserva::Pendente) {}
 Reserva::Reserva(const Reserva& outra) = default;
 Reserva& Reserva::operator=(const Reserva& outra) = default;
 Reserva::~Reserva() = default;
-bool Reserva::confirmarRetirada(int quantidadeRetirada, double valorRecebido) {
-    if (retiradaConfirmada_ || quantidadeRetirada <= 0 ||
-        quantidadeRetirada > quantidadeReservada_ ||
+bool Reserva::cancelar() {
+    if (id_ <= 0 || idOferta_ <= 0 || idConsumidor_ <= 0 ||
+        quantidadeReservada_ <= 0 || situacao_ != EstadoReserva::Pendente) {
+        return false;
+    }
+    situacao_ = EstadoReserva::Cancelada;
+    return true;
+}
+
+bool Reserva::confirmarRetirada(int quantidadeRetirada, double pesoAproveitadoKg,
+                                double valorRecebido) {
+    // Retirada parcial fica fora do escopo ate que sua regra seja definida.
+    if (id_ <= 0 || idOferta_ <= 0 || idConsumidor_ <= 0 ||
+        situacao_ != EstadoReserva::Pendente || quantidadeRetirada <= 0 ||
+        quantidadeRetirada != quantidadeReservada_ ||
+        !std::isfinite(pesoAproveitadoKg) || pesoAproveitadoKg <= 0.0 ||
         !std::isfinite(valorRecebido) || valorRecebido <= 0.0) {
         return false;
     }
     quantidadeRetirada_ = quantidadeRetirada;
+    pesoAproveitadoKg_ = pesoAproveitadoKg;
     valorRecebido_ = valorRecebido;
-    retiradaConfirmada_ = true;
+    situacao_ = EstadoReserva::Retirada;
     return true;
 }
 int Reserva::id() const { return id_; }
@@ -110,7 +139,6 @@ int Reserva::idConsumidor() const { return idConsumidor_; }
 int Reserva::quantidadeReservada() const { return quantidadeReservada_; }
 int Reserva::quantidadeRetirada() const { return quantidadeRetirada_; }
 double Reserva::valorRecebido() const { return valorRecebido_; }
-bool Reserva::retiradaConfirmada() const { return retiradaConfirmada_; }
-EstadoReserva Reserva::situacao() const {
-    return retiradaConfirmada_ ? EstadoReserva::Retirada : EstadoReserva::Pendente;
-}
+double Reserva::pesoAproveitadoKg() const { return pesoAproveitadoKg_; }
+bool Reserva::retiradaConfirmada() const { return situacao_ == EstadoReserva::Retirada; }
+EstadoReserva Reserva::situacao() const { return situacao_; }

@@ -1,8 +1,12 @@
+/** @file system.cpp
+ * @brief Implementacao central das operacoes e validacoes.
+ */
 #include "system.h"
 
 #include <algorithm>
 #include <cctype>
 #include <utility>
+#include <limits>
 
 namespace {
 std::string paraMinusculas(std::string texto) {
@@ -71,10 +75,17 @@ const Usuario* SistemaSaveFood::usuarioDaSessaoSemLock(const Sessao& sessao) con
 
 Sessao SistemaSaveFood::entrar(const std::string& email, const std::string& senha) {
     std::lock_guard<std::mutex> trava(mutex_);
+    if (email.empty() || senha.empty() ||
+        proximoIdSessao_ == std::numeric_limits<int>::max()) {
+        return Sessao();
+    }
     for (const auto& item : usuarios_) {
         if (item.second.email() == email && item.second.conferirSenha(senha)) {
-            const int codigo = proximoIdSessao_++;
-            sessoesAtivas_.emplace(codigo, item.first);
+            const int codigo = proximoIdSessao_;
+            if (!sessoesAtivas_.emplace(codigo, item.first).second) {
+                return Sessao();
+            }
+            ++proximoIdSessao_;
             return Sessao(codigo, item.first);
         }
     }
@@ -101,15 +112,28 @@ int SistemaSaveFood::publicarOferta(const Sessao& gerente, const std::string& de
         restaurantes_.find(usuario->idRestaurante()) == restaurantes_.end()) {
         return 0;
     }
+    // Evita exceder o intervalo dos identificadores inteiros.
+    if (proximoIdOferta_ == std::numeric_limits<int>::max()) {
+        return 0;
+    }
     const int id = proximoIdOferta_;
     Oferta oferta(id, usuario->idRestaurante(), descricao, quantidade,
                   pesoTotalKg, precoUnitario, janelaRetirada);
     if (!oferta.valida()) {
         return 0;
     }
-    ofertas_.emplace(id, oferta);
-    if (ofertaPublicada) {
-        *ofertaPublicada = oferta;
+    auto insercao = ofertas_.emplace(id, oferta);
+    if (!insercao.second) {
+        return 0;
+    }
+    try {
+        if (ofertaPublicada) {
+            *ofertaPublicada = oferta;
+        }
+    } catch (...) {
+        // Se a copia do resultado falhar, desfaz a publicacao.
+        ofertas_.erase(insercao.first);
+        throw;
     }
     ++proximoIdOferta_;
     return id;
@@ -160,14 +184,20 @@ bool SistemaSaveFood::reservar(const Sessao& consumidor, int idOferta, int quant
     const Usuario* usuario = usuarioDaSessaoSemLock(consumidor);
     auto itOferta = ofertas_.find(idOferta);
     if (!usuario || usuario->perfil() != Perfil::Consumidor ||
-        itOferta == ofertas_.end() || quantidade <= 0 ||
+        itOferta == ofertas_.end() || !itOferta->second.estaAtiva() ||
+        quantidade <= 0 ||
         quantidade > itOferta->second.quantidadeDisponivel()) {
         return false;
     }
 
     // A gravacao e a baixa do saldo ficam na mesma regiao critica.
+    if (proximoIdReserva_ == std::numeric_limits<int>::max()) {
+        return false;
+    }
     const int id = proximoIdReserva_;
-    reservas_.emplace(id, Reserva(id, idOferta, usuario->id(), quantidade));
+    if (!reservas_.emplace(id, Reserva(id, idOferta, usuario->id(), quantidade)).second) {
+        return false;
+    }
     if (!itOferta->second.reservar(quantidade)) {
         reservas_.erase(id);
         return false;
@@ -178,6 +208,50 @@ bool SistemaSaveFood::reservar(const Sessao& consumidor, int idOferta, int quant
         *reservaCriada = reservas_.at(id);
     }
     return true;
+}
+
+bool SistemaSaveFood::cancelarReserva(const Sessao& consumidor, int idReserva) {
+    std::lock_guard<std::mutex> trava(mutex_);
+    const Usuario* usuario = usuarioDaSessaoSemLock(consumidor);
+    auto itReserva = reservas_.find(idReserva);
+    if (!usuario || usuario->perfil() != Perfil::Consumidor ||
+        itReserva == reservas_.end()) {
+        return false;
+    }
+    Reserva& reserva = itReserva->second;
+    if (reserva.idConsumidor() != usuario->id() ||
+        reserva.situacao() != EstadoReserva::Pendente) {
+        return false;
+    }
+    auto itOferta = ofertas_.find(reserva.idOferta());
+    if (itOferta == ofertas_.end()) {
+        return false;
+    }
+
+    // Trabalha com uma copia da reserva: se a restauracao falhar,
+    // nem a situacao original nem o estoque serao alterados.
+    Reserva cancelada = reserva;
+    if (!cancelada.cancelar() ||
+        !itOferta->second.restaurarDisponibilidade(reserva.quantidadeReservada())) {
+        return false;
+    }
+    reserva = cancelada;
+    return true;
+}
+
+std::vector<Reserva> SistemaSaveFood::minhasReservas(const Sessao& consumidor) const {
+    std::lock_guard<std::mutex> trava(mutex_);
+    const Usuario* usuario = usuarioDaSessaoSemLock(consumidor);
+    std::vector<Reserva> encontradas;
+    if (!usuario || usuario->perfil() != Perfil::Consumidor) {
+        return encontradas;
+    }
+    for (const auto& item : reservas_) {
+        if (item.second.idConsumidor() == usuario->id()) {
+            encontradas.push_back(item.second);
+        }
+    }
+    return encontradas;
 }
 
 bool SistemaSaveFood::permitir(const Sessao& sessao, Perfil perfil,
@@ -207,7 +281,8 @@ std::vector<Reserva> SistemaSaveFood::listarReservas(const Sessao& gerente) cons
 }
 
 bool SistemaSaveFood::confirmarRetirada(const Sessao& gerente, int idReserva,
-                                        int quantidadeRetirada, double valorRecebido) {
+                                        int quantidadeRetirada, double pesoAproveitadoKg,
+                                        double valorRecebido) {
     std::lock_guard<std::mutex> trava(mutex_);
     const Usuario* usuario = usuarioDaSessaoSemLock(gerente);
     auto itReserva = reservas_.find(idReserva);
@@ -220,7 +295,8 @@ bool SistemaSaveFood::confirmarRetirada(const Sessao& gerente, int idReserva,
         itOferta->second.idRestaurante() != usuario->idRestaurante()) {
         return false;
     }
-    return itReserva->second.confirmarRetirada(quantidadeRetirada, valorRecebido);
+    return itReserva->second.confirmarRetirada(quantidadeRetirada,
+                                             pesoAproveitadoKg, valorRecebido);
 }
 
 ResumoIndicadores SistemaSaveFood::obterResumo(const Sessao& gerente) const {
@@ -239,7 +315,7 @@ ResumoIndicadores SistemaSaveFood::obterResumo(const Sessao& gerente) const {
         if (itOferta != ofertas_.end() &&
             itOferta->second.idRestaurante() == usuario->idRestaurante()) {
             resumo.pesoAproveitadoKg +=
-                reserva.quantidadeRetirada() * itOferta->second.pesoPorUnidadeKg();
+                reserva.pesoAproveitadoKg();
             resumo.receitaBrutaReais += reserva.valorRecebido();
         }
     }

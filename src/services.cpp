@@ -1,67 +1,86 @@
+/** @file services.cpp
+ * @brief Implementacao das interfaces de servico.
+ */
 #include "services.h"
 
 ServicoAutenticacao::ServicoAutenticacao(SistemaSaveFood& sistema)
-    : sistema_(sistema) {}
+    : sistema_(&sistema) {}
 
 bool ServicoAutenticacao::entrar(const std::string& email,
                                 const std::string& senha, Sessao& sessao) {
-    sessao = sistema_.entrar(email, senha);
+    if (!sistema_) {
+        sessao = Sessao();
+        return false;
+    }
+    sessao = sistema_->entrar(email, senha);
     return sessao.autenticada();
 }
 
 void ServicoAutenticacao::sair(Sessao& sessao) {
-    sistema_.sair(sessao);
+    if (sistema_) {
+        sistema_->sair(sessao);
+    }
 }
 
 ServicoAcesso::ServicoAcesso(const SistemaSaveFood& sistema)
-    : sistema_(sistema) {}
+    : sistema_(&sistema) {}
 
 bool ServicoAcesso::permitir(const Sessao& sessao, Papel papel,
                             int idRestaurante) const {
-    return sistema_.permitir(sessao, papel, idRestaurante);
+    return sistema_ && sistema_->permitir(sessao, papel, idRestaurante);
 }
 
 ServicoOfertas::ServicoOfertas(SistemaSaveFood& sistema, const Sessao& sessao)
-    : sistema_(sistema), sessao_(sessao) {}
+    : sistema_(&sistema), sessao_(sessao) {}
 
 bool ServicoOfertas::publicar(const DadosOferta& dados, Oferta& oferta) {
-    int id = sistema_.publicarOferta(sessao_, dados.descricao, dados.quantidade,
-                                    dados.pesoKgInformado, dados.preco,
+    if (!sistema_) return false;
+    int id = sistema_->publicarOferta(sessao_, dados.descricao, dados.quantidade,
+                                    dados.pesoTotalKg, dados.precoUnitario,
                                     dados.janelaRetirada, &oferta);
     return id > 0;
 }
 
 Colecao<Oferta> ServicoOfertas::consultar(const FiltroOferta& filtro) const {
-    return sistema_.consultarOfertas(sessao_, filtro.pesquisa);
+    return sistema_ ? sistema_->consultarOfertas(sessao_, filtro.termo) : Colecao<Oferta>{};
 }
 
 bool ServicoOfertas::detalhes(int idOferta, Oferta& oferta) const {
-    return sistema_.detalhesOferta(sessao_, idOferta, oferta);
+    return sistema_ && sistema_->detalhesOferta(sessao_, idOferta, oferta);
 }
 
 ServicoReservas::ServicoReservas(SistemaSaveFood& sistema, const Sessao& sessao)
-    : sistema_(sistema), sessao_(sessao) {}
+    : sistema_(&sistema), sessao_(sessao) {}
 
 bool ServicoReservas::reservar(int idOferta, int quantidade, Reserva& reserva) {
     int idReserva = 0;
-    return sistema_.reservar(sessao_, idOferta, quantidade, idReserva, &reserva);
+    return sistema_ && sistema_->reservar(sessao_, idOferta, quantidade, idReserva, &reserva);
+}
+
+bool ServicoReservas::cancelar(int idReserva) {
+    return sistema_ && sistema_->cancelarReserva(sessao_, idReserva);
+}
+
+Colecao<Reserva> ServicoReservas::minhasReservas() const {
+    return sistema_ ? sistema_->minhasReservas(sessao_) : Colecao<Reserva>{};
 }
 
 ServicoRetiradas::ServicoRetiradas(SistemaSaveFood& sistema, const Sessao& sessao)
-    : sistema_(sistema), sessao_(sessao) {}
+    : sistema_(&sistema), sessao_(sessao) {}
 
 Colecao<Reserva> ServicoRetiradas::listar() const {
-    return sistema_.listarReservas(sessao_);
+    return sistema_ ? sistema_->listarReservas(sessao_) : Colecao<Reserva>{};
 }
 
-bool ServicoRetiradas::confirmar(int idReserva, const ConfirmacaoRetirada& dados) {
-    return sistema_.confirmarRetirada(sessao_, idReserva,
-                                      dados.quantidadeRetirada, dados.valorRecebido);
+bool ServicoRetiradas::confirmar(int idReserva, const DadosRetirada& dados) {
+    return sistema_ && sistema_->confirmarRetirada(sessao_, idReserva,
+                                      dados.quantidadeEntregue, dados.pesoAproveitadoKg,
+                                      dados.valorRecebido);
 }
 
 ServicoIndicadores::ServicoIndicadores(SistemaSaveFood& sistema, const Sessao& sessao)
-    : sistema_(sistema), sessao_(sessao) {}
+    : sistema_(&sistema), sessao_(sessao) {}
 
 ResumoIndicadores ServicoIndicadores::obterResumo() const {
-    return sistema_.obterResumo(sessao_);
+    return sistema_ ? sistema_->obterResumo(sessao_) : ResumoIndicadores{};
 }
