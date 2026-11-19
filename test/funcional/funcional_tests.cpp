@@ -1,14 +1,13 @@
+/** @file funcional_tests.cpp
+ * @brief Cenarios de aceitacao de SB03, SB04 e SB05.
+ */
 #include "funcional_tests.h"
-
-#include "../../src/model.h"
-#include "../../src/services.h"
-#include "../../src/system.h"
+#include "services.h"
 
 #include <cmath>
 #include <exception>
 #include <iostream>
 #include <stdexcept>
-#include <thread>
 
 namespace {
 void verificar(bool condicao, const char* mensagem) {
@@ -17,180 +16,172 @@ void verificar(bool condicao, const char* mensagem) {
     }
 }
 
-bool quaseIgual(double a, double b) {
-    return std::fabs(a - b) < 0.000001;
+// Consulta o estoque pela API, sem acessar diretamente os dados internos.
+int saldo(ServicoOfertas& ofertas, int idOferta) {
+    Oferta detalhes;
+    verificar(ofertas.detalhes(idOferta, detalhes), "Oferta nao encontrada");
+    return detalhes.quantidadeDisponivel();
 }
 }
 
-// Fluxo 1: gerente publica, consumidor encontra o lote e acessos sao separados.
-bool testePublicacaoEConsulta() {
+// SB03 - Reservar quantidade disponivel (pagina 6 do projeto da API).
+bool testeReservarQuantidade() {
     try {
         SistemaSaveFood sistema;
         ServicoAutenticacao autenticacao(sistema);
-        Sessao gerente;
-        Sessao consumidor;
-        Sessao senhaErrada;
-
-        verificar(autenticacao.entrar("gerente@savefood.demo", "gerente123", gerente) &&
-                  autenticacao.entrar("consumidor@savefood.demo", "consumidor123", consumidor),
-                  "Falha no login valido");
-        verificar(!autenticacao.entrar("consumidor@savefood.demo", "errada", senhaErrada),
-                  "Senha incorreta foi aceita");
-
-        ServicoAcesso acesso(sistema);
-        verificar(acesso.permitir(gerente, Papel::Gerente, 1),
-                  "Gerente nao recebeu permissao do restaurante");
-        verificar(!acesso.permitir(gerente, Papel::Gerente, 2) &&
-                  !acesso.permitir(consumidor, Papel::Gerente),
-                  "Controle de acesso permitiu perfil ou restaurante incorreto");
-
-        ServicoOfertas ofertasGerente(sistema, gerente);
-        ServicoOfertas ofertasConsumidor(sistema, consumidor);
-        Oferta publicada;
-        DadosOferta dados{"Marmita caseira", 5, 2.5, 12.0, "18h-19h"};
-        verificar(ofertasGerente.publicar(dados, publicada),
-                  "Gerente nao conseguiu publicar");
-        Oferta naoPermitida;
-        verificar(!ofertasConsumidor.publicar(
-                      DadosOferta{"Nao permitido", 2, 1.0, 9.0, "18h"}, naoPermitida),
-                  "Consumidor conseguiu publicar oferta");
-        verificar(!ofertasGerente.publicar(
-                      DadosOferta{"Incompleta", 0, 1.0, 9.0, "18h"}, naoPermitida),
-                  "Oferta invalida foi aceita");
-
-        Colecao<Oferta> catalogo = ofertasConsumidor.consultar(FiltroOferta{"marmita"});
-        verificar(catalogo.size() == 1, "Catalogo nao retornou a oferta correta");
-        verificar(catalogo.front().quantidadeDisponivel() == 5,
-                  "Quantidade inicial incorreta");
-        Oferta detalhes;
-        verificar(ofertasConsumidor.detalhes(publicada.id(), detalhes) &&
-                  detalhes.descricao() == "Marmita caseira" &&
-                  detalhes.precoUnitario() == 12.0,
-                  "Detalhes da oferta nao correspondem ao lote publicado");
-        verificar(!ofertasConsumidor.detalhes(9999, detalhes),
-                  "Consulta por ID inexistente foi aceita");
-        Sessao gerente2;
-        verificar(autenticacao.entrar("gerente2@savefood.demo", "gerente123", gerente2),
-                  "Falha no login do segundo gerente");
-        ServicoOfertas ofertasOutroRestaurante(sistema, gerente2);
-        verificar(!ofertasOutroRestaurante.detalhes(publicada.id(), detalhes),
-                  "Gerente de outro restaurante consultou detalhes protegidos");
-        autenticacao.sair(consumidor);
-        verificar(ofertasConsumidor.consultar(FiltroOferta{""}).empty() &&
-                  !ofertasConsumidor.detalhes(publicada.id(), detalhes),
-                  "Sessao encerrada ainda acessa o catalogo protegido");
-        std::cout << "[OK] 1. Publicacao, consulta e controle de acesso\n";
-        return true;
-    } catch (const std::exception& erro) {
-        std::cerr << "[FALHOU] Teste 1: " << erro.what() << '\n';
-        return false;
-    }
-}
-
-// Fluxo 2: duas pessoas tentam reservar o mesmo saldo ao mesmo tempo.
-bool testeReservasConcorrentes() {
-    try {
-        SistemaSaveFood sistema;
-        ServicoAutenticacao autenticacao(sistema);
-        Sessao gerente;
-        Sessao consumidor1;
-        Sessao consumidor2;
-        verificar(autenticacao.entrar("gerente@savefood.demo", "gerente123", gerente) &&
-                  autenticacao.entrar("consumidor@savefood.demo", "consumidor123", consumidor1) &&
-                  autenticacao.entrar("consumidor2@savefood.demo", "consumidor123", consumidor2),
-                  "Falha ao preparar as sessoes");
+        Sessao gerente, consumidor;
+        verificar(autenticacao.entrar("gerente@savefood.demo", "gerente123", gerente),
+                  "Falha no login do gerente");
+        verificar(autenticacao.entrar("consumidor@savefood.demo", "consumidor123", consumidor),
+                  "Falha no login do consumidor");
         ServicoOfertas ofertas(sistema, gerente);
-        Oferta publicada;
-        verificar(ofertas.publicar(DadosOferta{"Pao do dia", 4, 2.0, 5.0, "17h-18h"},
-                                 publicada), "Oferta da concorrencia nao foi criada");
-
-        bool resultado1 = false;
-        bool resultado2 = false;
-        Reserva reserva1;
-        Reserva reserva2;
-        ServicoReservas reservas1(sistema, consumidor1);
-        ServicoReservas reservas2(sistema, consumidor2);
-        std::thread primeira([&] { resultado1 = reservas1.reservar(publicada.id(), 3, reserva1); });
-        std::thread segunda([&] { resultado2 = reservas2.reservar(publicada.id(), 3, reserva2); });
-        primeira.join();
-        segunda.join();
-
-        verificar(static_cast<int>(resultado1) + static_cast<int>(resultado2) == 1,
-                  "Duas reservas excederam o saldo ou ambas falharam");
-        verificar(sistema.saldoOferta(gerente, publicada.id()) == 1,
-                  "Saldo incorreto apos reservas concorrentes");
-        verificar((resultado1 ? reserva1.id() : reserva2.id()) > 0,
-                  "Reserva aprovada nao retornou os dados ao consumidor");
-        ServicoRetiradas retiradas(sistema, gerente);
-        verificar(retiradas.listar().size() == 1,
-                  "Apenas uma reserva deveria ter sido gravada");
-
-        Sessao gerente2;
-        autenticacao.entrar("gerente2@savefood.demo", "gerente123", gerente2);
-        ServicoRetiradas retiradasOutro(sistema, gerente2);
-        verificar(retiradasOutro.listar().empty(),
-                  "Gerente de outro restaurante visualizou reservas");
-        std::cout << "[OK] 2. Reserva simultanea sem ultrapassar quantidade\n";
-        return true;
-    } catch (const std::exception& erro) {
-        std::cerr << "[FALHOU] Teste 2: " << erro.what() << '\n';
-        return false;
-    }
-}
-
-// Fluxo 3: retirada confirmada soma os indicadores; pendencias nao somam.
-bool testeRetiradaEIndicadores() {
-    try {
-        SistemaSaveFood sistema;
-        ServicoAutenticacao autenticacao(sistema);
-        Sessao gerente;
-        Sessao gerente2;
-        Sessao consumidor;
-        verificar(autenticacao.entrar("gerente@savefood.demo", "gerente123", gerente) &&
-                  autenticacao.entrar("gerente2@savefood.demo", "gerente123", gerente2) &&
-                  autenticacao.entrar("consumidor@savefood.demo", "consumidor123", consumidor),
-                  "Falha ao preparar as sessoes");
-        ServicoOfertas ofertas(sistema, gerente);
-        Oferta publicada;
-        verificar(ofertas.publicar(DadosOferta{"Almoco", 6, 3.0, 12.0, "18h-19h"},
-                                 publicada), "Falha ao publicar almoco");
-
         ServicoReservas reservas(sistema, consumidor);
-        Reserva retirada;
-        Reserva pendente;
-        verificar(reservas.reservar(publicada.id(), 2, retirada), "Primeira reserva falhou");
-        verificar(reservas.reservar(publicada.id(), 1, pendente), "Reserva pendente falhou");
-        verificar(pendente.situacao() == EstadoReserva::Pendente,
-                  "Reserva nova nao foi marcada como pendente");
+        Oferta lote;
+        verificar(ofertas.publicar({"Marmita", 5, 2.5, 12.0, "18h-19h"}, lote),
+                  "Falha ao preparar a oferta");
+        verificar(saldo(ofertas, lote.id()) == 5, "Saldo inicial deveria ser 5");
 
-        ServicoIndicadores indicadores(sistema, gerente);
-        ServicoIndicadores indicadoresOutro(sistema, gerente2);
-        ResumoIndicadores antes = indicadores.obterResumo();
-        verificar(quaseIgual(antes.pesoAproveitadoKg, 0.0) &&
-                      quaseIgual(antes.receitaBrutaReais, 0.0),
-                  "Reservas pendentes alteraram o resumo");
-        ServicoRetiradas retiradas(sistema, gerente);
-        ServicoRetiradas retiradasOutro(sistema, gerente2);
-        ConfirmacaoRetirada entrega{2, 24.0};
-        verificar(!retiradasOutro.confirmar(retirada.id(), entrega),
-                  "Outro gerente confirmou a retirada");
-        verificar(retiradas.confirmar(retirada.id(), entrega),
-                  "Gerente nao confirmou a retirada");
-        verificar(!retiradas.confirmar(retirada.id(), entrega),
-                  "A retirada foi confirmada duas vezes");
+        // CT-01: reservar 2 de 5 unidades. O saldo deve cair para 3.
+        Reserva criada;
+        verificar(reservas.reservar(lote.id(), 2, criada), "Reserva valida recusada");
+        verificar(criada.id() > 0 && criada.idOferta() == lote.id() &&
+                  criada.quantidadeReservada() == 2 &&
+                  criada.situacao() == EstadoReserva::Pendente,
+                  "Dados da reserva incorretos");
+        verificar(saldo(ofertas, lote.id()) == 3, "Saldo deveria ser 3");
+        auto lista = reservas.minhasReservas();
+        verificar(lista.size() == 1 && lista.front().id() == criada.id() &&
+                  lista.front().situacao() == EstadoReserva::Pendente,
+                  "Reserva pendente nao registrada");
 
-        ResumoIndicadores depois = indicadores.obterResumo();
-        verificar(quaseIgual(depois.pesoAproveitadoKg, 1.0) &&
-                      quaseIgual(depois.receitaBrutaReais, 24.0),
-                  "Indicadores nao correspondem a retirada confirmada");
-        ResumoIndicadores outro = indicadoresOutro.obterResumo();
-        verificar(quaseIgual(outro.pesoAproveitadoKg, 0.0) &&
-                      quaseIgual(outro.receitaBrutaReais, 0.0),
-                  "Indicadores de outro restaurante foram expostos");
-        std::cout << "[OK] 3. Confirmacao de retirada e indicadores\n";
+        // CT-02: preparar saldo 1 e tentar reservar 2 unidades.
+        Reserva preparacao, recusada;
+        verificar(reservas.reservar(lote.id(), 2, preparacao), "Falha na preparacao do CT-02");
+        verificar(saldo(ofertas, lote.id()) == 1, "Saldo deveria ser 1");
+        const auto antes = reservas.minhasReservas().size();
+        verificar(!reservas.reservar(lote.id(), 2, recusada), "Reserva acima do saldo aceita");
+        verificar(saldo(ofertas, lote.id()) == 1 && reservas.minhasReservas().size() == antes &&
+                  recusada.id() == 0, "Reserva recusada alterou o saldo ou criou registro");
+        std::cout << "[OK] SB03 - CT-01: saldo 5 -> 3; CT-02: saldo insuficiente, permanece 1\n";
         return true;
     } catch (const std::exception& erro) {
-        std::cerr << "[FALHOU] Teste 3: " << erro.what() << '\n';
+        std::cerr << "[FALHOU] SB03: " << erro.what() << '\n';
+        return false;
+    }
+}
+
+// SB04 - Cancelar reserva e restaurar disponibilidade (pagina 7).
+bool testeCancelarReserva() {
+    try {
+        SistemaSaveFood sistema;
+        ServicoAutenticacao autenticacao(sistema);
+        Sessao gerente, consumidor, outroConsumidor;
+        verificar(autenticacao.entrar("gerente@savefood.demo", "gerente123", gerente),
+                  "Falha no login do gerente");
+        verificar(autenticacao.entrar("consumidor@savefood.demo", "consumidor123", consumidor),
+                  "Falha no login do consumidor");
+        verificar(autenticacao.entrar("consumidor2@savefood.demo", "consumidor123", outroConsumidor),
+                  "Falha no login do segundo consumidor");
+        ServicoOfertas ofertas(sistema, gerente);
+        ServicoReservas reservas(sistema, consumidor), reservasOutro(sistema, outroConsumidor);
+        Oferta lote;
+        Reserva criada;
+        verificar(ofertas.publicar({"Marmita", 5, 2.5, 12.0, "18h-19h"}, lote) &&
+                  reservas.reservar(lote.id(), 2, criada), "Falha ao preparar a reserva");
+        verificar(saldo(ofertas, lote.id()) == 3, "Saldo antes do cancelamento deveria ser 3");
+        auto lista = reservas.minhasReservas();
+        verificar(lista.size() == 1 && lista.front().id() == criada.id() &&
+                  lista.front().situacao() == EstadoReserva::Pendente,
+                  "Reserva propria pendente nao encontrada");
+        verificar(reservasOutro.minhasReservas().empty(), "Reserva de terceiro exposta");
+        verificar(!reservasOutro.cancelar(criada.id()) && saldo(ofertas, lote.id()) == 3,
+                  "Terceiro conseguiu cancelar a reserva");
+
+        // CT-01: cancelar a propria reserva pendente e restaurar 2 unidades.
+        verificar(reservas.cancelar(criada.id()), "Cancelamento valido recusado");
+        lista = reservas.minhasReservas();
+        verificar(lista.size() == 1 && lista.front().id() == criada.id() &&
+                  lista.front().situacao() == EstadoReserva::Cancelada,
+                  "Situacao CANCELADA nao registrada");
+        verificar(saldo(ofertas, lote.id()) == 5, "Estoque nao retornou a 5");
+
+        // CT-02: repetir o cancelamento, sem uma segunda devolucao.
+        verificar(!reservas.cancelar(criada.id()), "Cancelamento repetido aceito");
+        lista = reservas.minhasReservas();
+        verificar(saldo(ofertas, lote.id()) == 5 && lista.size() == 1 &&
+                  lista.front().situacao() == EstadoReserva::Cancelada,
+                  "Cancelamento repetido alterou os dados");
+        std::cout << "[OK] SB04 - CT-01: saldo 3 -> 5; CT-02: cancelamento repetido recusado\n";
+        return true;
+    } catch (const std::exception& erro) {
+        std::cerr << "[FALHOU] SB04: " << erro.what() << '\n';
+        return false;
+    }
+}
+
+// SB05 - Consultar reservas e confirmar retirada (pagina 8).
+bool testeConfirmarRetirada() {
+    try {
+        SistemaSaveFood sistema;
+        ServicoAutenticacao autenticacao(sistema);
+        Sessao gerenteA, gerenteB, consumidor;
+        verificar(autenticacao.entrar("gerente@savefood.demo", "gerente123", gerenteA),
+                  "Falha no login do gerente A");
+        verificar(autenticacao.entrar("gerente2@savefood.demo", "gerente123", gerenteB),
+                  "Falha no login do gerente B");
+        verificar(autenticacao.entrar("consumidor@savefood.demo", "consumidor123", consumidor),
+                  "Falha no login do consumidor");
+        ServicoOfertas ofertasA(sistema, gerenteA), ofertasB(sistema, gerenteB);
+        ServicoReservas reservas(sistema, consumidor);
+        ServicoRetiradas retiradasA(sistema, gerenteA), retiradasB(sistema, gerenteB);
+        Oferta loteA, loteB;
+        Reserva reservaA, reservaB;
+        // Peso anunciado diferente do peso efetivo para testar o dado informado.
+        verificar(ofertasA.publicar({"Marmita A", 5, 3.0, 12.0, "18h-19h"}, loteA) &&
+                  ofertasB.publicar({"Marmita B", 5, 2.5, 12.0, "18h-19h"}, loteB) &&
+                  reservas.reservar(loteA.id(), 2, reservaA) &&
+                  reservas.reservar(loteB.id(), 2, reservaB), "Falha ao preparar as reservas");
+        auto listaA = retiradasA.listar();
+        auto listaB = retiradasB.listar();
+        verificar(listaA.size() == 1 && listaA.front().id() == reservaA.id() &&
+                  listaA.front().situacao() == EstadoReserva::Pendente &&
+                  listaB.size() == 1 && listaB.front().id() == reservaB.id() &&
+                  listaB.front().situacao() == EstadoReserva::Pendente,
+                  "Listagem inclui reservas incorretas");
+
+        // CT-01: confirmar 2 unidades, 1 kg e R$ 24 no restaurante A.
+        DadosRetirada dados{2, 1.0, 24.0};
+        verificar(retiradasA.confirmar(reservaA.id(), dados), "Retirada valida recusada");
+        listaA = retiradasA.listar();
+        verificar(listaA.size() == 1 && listaA.front().id() == reservaA.id() &&
+                  listaA.front().situacao() == EstadoReserva::Retirada &&
+                  listaA.front().quantidadeRetirada() == 2 &&
+                  std::fabs(listaA.front().pesoAproveitadoKg() - 1.0) < 1e-6 &&
+                  std::fabs(listaA.front().valorRecebido() - 24.0) < 1e-6,
+                  "Dados efetivos da retirada nao registrados");
+        verificar(!retiradasA.confirmar(reservaA.id(), dados), "Confirmacao duplicada aceita");
+        verificar(!reservas.cancelar(reservaA.id()), "Reserva retirada foi cancelada");
+        verificar(saldo(ofertasA, loteA.id()) == 3, "Retirada alterou indevidamente o saldo");
+
+        // CT-02: gerente A tenta confirmar reserva do restaurante B.
+        verificar(!retiradasA.confirmar(reservaB.id(), dados), "Retirada de outro restaurante aceita");
+        listaB = retiradasB.listar();
+        verificar(listaB.size() == 1 && listaB.front().id() == reservaB.id() &&
+                  listaB.front().situacao() == EstadoReserva::Pendente &&
+                  listaB.front().quantidadeRetirada() == 0 &&
+                  listaB.front().pesoAproveitadoKg() == 0.0 && listaB.front().valorRecebido() == 0.0 &&
+                  saldo(ofertasB, loteB.id()) == 3, "Tentativa indevida alterou a reserva B");
+        // A entrega confirmada fica disponivel para os indicadores (efeito do SB05).
+        const auto resumoA = ServicoIndicadores(sistema, gerenteA).obterResumo();
+        const auto resumoB = ServicoIndicadores(sistema, gerenteB).obterResumo();
+        verificar(std::fabs(resumoA.pesoAproveitadoKg - 1.0) < 1e-6 &&
+                  std::fabs(resumoA.receitaBrutaReais - 24.0) < 1e-6 &&
+                  resumoB.pesoAproveitadoKg == 0.0 && resumoB.receitaBrutaReais == 0.0,
+                  "Indicadores nao refletem a retirada confirmada uma unica vez");
+        std::cout << "[OK] SB05 - CT-01: retirada de 2 unidades, 1 kg e R$ 24; CT-02: acesso negado\n";
+        return true;
+    } catch (const std::exception& erro) {
+        std::cerr << "[FALHOU] SB05: " << erro.what() << '\n';
         return false;
     }
 }

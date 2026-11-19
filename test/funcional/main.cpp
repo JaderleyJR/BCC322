@@ -1,18 +1,22 @@
+/** @file
+ * @brief Ponto de entrada dos testes funcionais.
+ */
 #ifndef MAIN_FUNCIONAL_TESTS
 #define MAIN_FUNCIONAL_TESTS
 
 #include "funcional_tests.h"
-#include "../../src/model.h"
-#include "../../src/system.h"
-#include "../../src/flow.h"
+#include "model.h"
+#include "system.h"
+#include "flow.h"
 
 #include <iostream>
 
+/** @brief Executa os tres testes e retorna 1 se algum falhar, ou 0 em sucesso. */
 int main() {
     std::cout << "=== SaveFood - testes funcionais ===\n";
-    const bool teste1 = testePublicacaoEConsulta();
-    const bool teste2 = testeReservasConcorrentes();
-    const bool teste3 = testeRetiradaEIndicadores();
+    const bool teste1 = testeReservarQuantidade();
+    const bool teste2 = testeCancelarReserva();
+    const bool teste3 = testeConfirmarRetirada();
 
     if (teste1 && teste2 && teste3) {
         std::cout << "Todos os 3 testes funcionais passaram.\n";
