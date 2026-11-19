@@ -2,7 +2,7 @@
 setlocal
 
 if not exist bin mkdir bin
-set FLAGS=-std=c++17 -O2 -Wall -Wextra -pthread
+set FLAGS=-Iinclude -std=c++17 -O2 -Wall -Wextra -pthread
 set FONTES=src\model.cpp src\system.cpp src\services.cpp src\flow.cpp
 
 g++ %FLAGS% src\main.cpp %FONTES% -o bin\savefood.exe
