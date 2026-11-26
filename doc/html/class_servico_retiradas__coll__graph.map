@@ -1,0 +1,7 @@
+<map id="ServicoRetiradas" name="ServicoRetiradas">
+<area shape="rect" id="Node000001" title="Interface de consulta e confirmacao de retirada (SB05)." alt="" coords="114,701,254,899"/>
+<area shape="rect" id="Node000002" href="$class_sistema_save_food.html" title="Centraliza o dominio em memoria e protege as operacoes com mutex." alt="" coords="5,5,195,629"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,627,167,685,162,684,154,632"/>
+<area shape="rect" id="Node000003" href="$class_sessao.html" title="Identificacao temporaria de um usuario autenticado." alt="" coords="219,197,318,437"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="266,435,257,555,235,678,233,686,228,683,230,677,251,554,264,440"/>
+</map>

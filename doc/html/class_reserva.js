@@ -1,0 +1,27 @@
+var class_reserva =
+[
+    [ "Reserva", "class_reserva.html#a0738e74ff413ed13f9a141c5dae3d0bb", null ],
+    [ "Reserva", "class_reserva.html#afa8af30051fa9f73d0e7e9a2ffa5c3cd", null ],
+    [ "Reserva", "class_reserva.html#a2b5ec208d0bc4401e3473aaeff3d5401", null ],
+    [ "~Reserva", "class_reserva.html#ac94be11c03cc96f7bfc1f5a0c8c911b3", null ],
+    [ "cancelar", "class_reserva.html#a7e1187c2307f9c77a9c6bf332f754288", null ],
+    [ "confirmarRetirada", "class_reserva.html#ae881d05f59ccf21fe53ff54ea8ef4bd9", null ],
+    [ "id", "class_reserva.html#a8fd39d98c0166a9b69b5e30a3f1c6b01", null ],
+    [ "idConsumidor", "class_reserva.html#ac2b95daaa89df7e91a547ac46c70ef8e", null ],
+    [ "idOferta", "class_reserva.html#a762fb61488912a3beedd4459e6e8f868", null ],
+    [ "operator=", "class_reserva.html#ad0435251363b44b3b67fdac5bf473e17", null ],
+    [ "pesoAproveitadoKg", "class_reserva.html#ad7a93c5c33465379231dda5f348e6064", null ],
+    [ "quantidadeReservada", "class_reserva.html#a0d0fbec59bf5ba7e915a3e2ca0e2007e", null ],
+    [ "quantidadeRetirada", "class_reserva.html#a52141347f33494f6f42c5055a8a4559f", null ],
+    [ "retiradaConfirmada", "class_reserva.html#a7fe759527cf76c36e6b12ca044ab2fd9", null ],
+    [ "situacao", "class_reserva.html#aa3b791d90dbeb967b32610d6eafd9a25", null ],
+    [ "valorRecebido", "class_reserva.html#adfb7801b722479d6a0cc870819d38537", null ],
+    [ "id_", "class_reserva.html#a539420fae87c74d03ce4f848158cb630", null ],
+    [ "idConsumidor_", "class_reserva.html#aaf863d3ebbf8fffbdff058e5d1ac4f2d", null ],
+    [ "idOferta_", "class_reserva.html#aed8a21b1a2647e26f0d742cc7354af49", null ],
+    [ "pesoAproveitadoKg_", "class_reserva.html#a1468338bfbf8e27256b8ab825e994438", null ],
+    [ "quantidadeReservada_", "class_reserva.html#a349132cd3b77818baa45f47ffe096569", null ],
+    [ "quantidadeRetirada_", "class_reserva.html#a5a42e1596bd0d83d7e5b37f1bcf00001", null ],
+    [ "situacao_", "class_reserva.html#a4e3ea5a09d8e153ea610423e44c0c564", null ],
+    [ "valorRecebido_", "class_reserva.html#a49ab33ca391b836387fd9ae1bd76c4f5", null ]
+];

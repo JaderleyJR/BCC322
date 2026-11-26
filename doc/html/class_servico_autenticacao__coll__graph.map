@@ -1,0 +1,5 @@
+<map id="ServicoAutenticacao" name="ServicoAutenticacao">
+<area shape="rect" id="Node000001" title="Interface para abrir e encerrar sessoes." alt="" coords="20,701,180,899"/>
+<area shape="rect" id="Node000002" href="$class_sistema_save_food.html" title="Centraliza o dominio em memoria e protege as operacoes com mutex." alt="" coords="5,5,195,629"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,627,103,685,98,684,100,632"/>
+</map>

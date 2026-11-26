@@ -1,0 +1,7 @@
+<map id="ServicoIndicadores" name="ServicoIndicadores">
+<area shape="rect" id="Node000001" title="Interface de consulta de indicadores do restaurante (SB06)." alt="" coords="109,701,260,877"/>
+<area shape="rect" id="Node000002" href="$class_sistema_save_food.html" title="Centraliza o dominio em memoria e protege as operacoes com mutex." alt="" coords="5,5,195,629"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,627,169,685,163,684,155,632"/>
+<area shape="rect" id="Node000003" href="$class_sessao.html" title="Identificacao temporaria de um usuario autenticado." alt="" coords="219,197,318,437"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="269,435,260,555,251,617,238,678,235,687,230,684,232,677,246,616,255,554,266,439"/>
+</map>
