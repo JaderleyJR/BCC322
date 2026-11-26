@@ -1,0 +1,36 @@
+<map id="test/unit/unit_tests.cpp" name="test/unit/unit_tests.cpp">
+<area shape="rect" id="Node000001" title="Testes unitarios das classes e de suas validacoes." alt="" coords="313,5,467,32"/>
+<area shape="rect" id="Node000002" href="$unit__tests_8h.html" title="Declaracoes dos tres testes unitarios." alt="" coords="5,80,95,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="329,35,111,82,109,77,331,30"/>
+<area shape="rect" id="Node000003" href="$model_8h.html" title="Classes do dominio, perfis e estados." alt="" coords="23,229,90,256"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="328,34,272,54,214,82,172,114,133,151,77,218,72,215,129,147,168,110,211,78,270,49,332,31"/>
+<area shape="rect" id="Node000006" href="$system_8h.html" title="Operacoes centrais e armazenamento em memoria." alt="" coords="170,155,245,181"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="316,34,274,53,253,66,235,82,219,110,211,141,207,138,214,108,231,78,250,61,271,48,320,31"/>
+<area shape="rect" id="Node000010" href="$services_8h.html" title="Interfaces da API e tipos de entrada." alt="" coords="244,80,325,107"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="370,34,317,73,314,69,374,31"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="349,80,431,107"/>
+<area shape="poly" id="edge15_Node000001_Node000011" title=" " alt="" coords="391,30,392,65,388,63,389,35"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="455,80,512,107"/>
+<area shape="poly" id="edge16_Node000001_Node000012" title=" " alt="" coords="407,30,458,70,453,71,406,35"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="537,80,614,107"/>
+<area shape="poly" id="edge17_Node000001_Node000013" title=" " alt="" coords="422,30,531,73,526,75,422,35"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="638,80,710,107"/>
+<area shape="poly" id="edge18_Node000001_Node000014" title=" " alt="" coords="439,30,625,78,620,80,439,35"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="734,80,812,107"/>
+<area shape="poly" id="edge19_Node000001_Node000015" title=" " alt="" coords="467,30,720,78,715,80,467,35"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="19,304,84,331"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="57,255,56,289,51,288,54,259"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="107,304,161,331"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="71,254,112,293,107,294,69,259"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="180,184,98,225,95,220,183,180"/>
+<area shape="poly" id="edge9_Node000006_Node000005" title=" " alt="" coords="194,180,174,204,155,231,144,260,138,290,134,287,139,259,150,228,169,201,190,183"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="164,229,210,256"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="206,180,197,216,193,213,202,184"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="235,229,292,256"/>
+<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="218,179,247,217,242,217,216,184"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="316,229,373,256"/>
+<area shape="poly" id="edge10_Node000006_Node000009" title=" " alt="" coords="232,179,310,221,305,222,231,185"/>
+<area shape="poly" id="edge13_Node000010_Node000005" title=" " alt="" coords="303,104,340,133,377,171,390,192,398,214,398,236,388,258,374,270,352,280,296,296,233,308,176,315,176,310,232,302,295,291,351,275,371,265,384,254,393,235,393,215,386,195,372,174,336,137,303,110"/>
+<area shape="poly" id="edge12_Node000010_Node000006" title=" " alt="" coords="273,105,233,146,230,142,269,109"/>
+<area shape="poly" id="edge14_Node000010_Node000009" title=" " alt="" coords="291,105,336,215,331,214,288,109"/>
+</map>
