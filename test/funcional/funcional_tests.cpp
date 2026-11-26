@@ -2,7 +2,7 @@
  * @brief Cenarios de aceitacao de SB03, SB04 e SB05.
  */
 #include "funcional_tests.h"
-#include "services.h"
+#include "../../src/services.h"
 
 #include <cmath>
 #include <exception>

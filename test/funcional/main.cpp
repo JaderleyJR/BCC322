@@ -1,13 +1,10 @@
 /** @file
  * @brief Ponto de entrada dos testes funcionais.
  */
-#ifndef MAIN_FUNCIONAL_TESTS
-#define MAIN_FUNCIONAL_TESTS
-
 #include "funcional_tests.h"
-#include "model.h"
-#include "system.h"
-#include "flow.h"
+#include "../../src/model.h"
+#include "../../src/system.h"
+#include "../../src/flow.h"
 
 #include <iostream>
 
@@ -24,5 +21,3 @@ int main() {
     }
     return 1;
 }
-
-#endif

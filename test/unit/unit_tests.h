@@ -1,14 +1,12 @@
 /** @file unit_tests.h
- * @brief Declaracoes dos tres testes unitarios.
+ * @brief Assinaturas dos testes unitarios das funcoes de escopo global.
  */
-#ifndef SAVEFOOD_UNIT_TESTS_H
-#define SAVEFOOD_UNIT_TESTS_H
+#ifndef UNIT_TESTS
+#define UNIT_TESTS
 
-/** @brief Verifica forma canonica de Oferta e Usuario e rejeicao de dados invalidos. */
-bool testeCopiaDeOferta();
-/** @brief Verifica copia, atribuicao e regras de estado de Reserva. */
-bool testeCopiaDeReserva();
-/** @brief Verifica copia e atribuicao de SistemaSaveFood. */
-bool testeCopiaDoSistema();
+/** @brief Testa a funcao global executarDemonstracao() (src/flow.h). */
+void unit_executarDemonstracao(void);
+/** @brief Executa todos os testes unitarios das funcoes globais. */
+void run_unit_test_globals(void);
 
 #endif

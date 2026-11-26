@@ -1,37 +1,49 @@
-# SaveFood - Sprint 4
+# SaveFood
 
 Projeto em C++17 para a disciplina de Engenharia de Software da UFOP.
 O codigo implementa o fluxo comercial minimo definido no backlog: acesso,
-publicacao, consulta, reserva, cancelamento, confirmacao presencial e indicadores basicos.
+publicacao, consulta, reserva, cancelamento, confirmacao presencial e
+indicadores basicos (SB01 a SB06 do Projeto da API).
 
 ## Arvore de diretorios
 
+O repositorio recebe o nome do produto. O codigo do produto fica em `src`,
+os executaveis em `bin` e os testes em `test`. Ha tres arquivos `main.cpp`:
+um para o produto, um para os testes funcionais e um para os testes unitarios.
+
 ```text
 SaveFood/
-|-- bin/                       # Executaveis
-|-- include/                   # Cabecalhos originais do produto
-|   |-- model.h
-|   |-- system.h
-|   |-- services.h
-|   `-- flow.h
-|-- src/                       # Implementacoes originais
+|-- bin/                          # Executaveis gerados pela compilacao
+|-- src/                          # Produto (cabecalhos e implementacoes)
 |   |-- main.cpp
-|   |-- model.cpp
-|   |-- system.cpp
-|   |-- services.cpp
-|   `-- flow.cpp
+|   |-- model.h / model.cpp       # Restaurante, Usuario, Sessao, Oferta, Reserva, ResumoIndicadores
+|   |-- system.h / system.cpp     # SistemaSaveFood
+|   |-- services.h / services.cpp # Servicos da API
+|   `-- flow.h / flow.cpp         # executarDemonstracao (funcao global)
 |-- test/
-|   |-- funcional/
+|   |-- unit/
 |   |   |-- main.cpp
-|   |   |-- funcional_tests.h
-|   |   `-- funcional_tests.cpp
-|   `-- unit/
+|   |   |-- unit_tests.h / unit_tests.cpp                 # funcoes globais
+|   |   |-- unit_Restaurante.h / unit_Restaurante.cpp
+|   |   |-- unit_Usuario.h / unit_Usuario.cpp
+|   |   |-- unit_Sessao.h / unit_Sessao.cpp
+|   |   |-- unit_Oferta.h / unit_Oferta.cpp
+|   |   |-- unit_Reserva.h / unit_Reserva.cpp
+|   |   |-- unit_ResumoIndicadores.h / unit_ResumoIndicadores.cpp
+|   |   |-- unit_SistemaSaveFood.h / unit_SistemaSaveFood.cpp
+|   |   |-- unit_ServicoAutenticacao.h / unit_ServicoAutenticacao.cpp
+|   |   |-- unit_ServicoAcesso.h / unit_ServicoAcesso.cpp
+|   |   |-- unit_ServicoOfertas.h / unit_ServicoOfertas.cpp
+|   |   |-- unit_ServicoReservas.h / unit_ServicoReservas.cpp
+|   |   |-- unit_ServicoRetiradas.h / unit_ServicoRetiradas.cpp
+|   |   `-- unit_ServicoIndicadores.h / unit_ServicoIndicadores.cpp
+|   `-- funcional/
 |       |-- main.cpp
-|       |-- unit_tests.h
-|       `-- unit_tests.cpp
-|-- docs/
-|   |-- graficos/              # Diagramas SVG e fontes DOT
-|   `-- html/                  # Gerado pelo Doxygen
+|       |-- funcional_tests.h
+|       `-- funcional_tests.cpp
+|-- doc/
+|   |-- graficos/                 # Diagramas SVG e fontes DOT
+|   `-- html/                     # Gerado pelo Doxygen (make docs)
 |-- Doxyfile
 |-- Makefile
 |-- compilar_windows.bat
@@ -39,57 +51,91 @@ SaveFood/
 `-- README.md
 ```
 
-## Modularizacao e tratamento de erros
+Os testes incluem o produto por caminho relativo, por exemplo
+`#include "../../src/system.h"`, por isso a compilacao nao precisa de `-I`.
 
-Somente os quatro cabecalhos do produto foram movidos para `include/`.
-Os cabecalhos de teste permanecem nos respectivos diretorios. A compilacao
-usa `-Iinclude`, sem criar classes, funcoes ou assinaturas novas.
+## Testes unitarios
 
-As operacoes existentes preservam seus retornos: `false` para recusas,
-`0` para publicacao recusada, sessao inativa para login recusado, `-1` para
-saldo inacessivel e colecoes vazias ou resumo zerado para consultas sem acesso.
-As consultas vazias nao distinguem falta de acesso de ausencia de registros.
-Foram reforcadas as validacoes de dados em branco, limites de IDs,
-estoque e estados da reserva. A publicacao desfaz a insercao se houver uma
-excecao durante a copia do resultado. A demonstracao informa a falha,
-encerra as sessoes e o programa principal trata excecoes e retorna 1.
-As verificacoes de acesso e os controles de concorrencia existentes foram mantidos.
+Convencoes adotadas:
 
-## Sprint 4 - Doxygen e Graphviz
+- Para cada classe do produto ha um par `unit_<Classe>.h` / `unit_<Classe>.cpp`.
+- Cada metodo publico tem uma funcao de teste independente
+  `void unit_<Classe>_<metodo>(void)`. As operacoes canonicas usam os nomes
+  `constructor`, `copyConstructor`, `assignmentOperator` e `destructor`.
+- Cada `unit_<Classe>.cpp` possui `void run_unit_test_<Classe>(void)`,
+  que invoca todos os testes da classe.
+- Funcoes de escopo global sao testadas por `void unit_<funcao>(void)` em
+  `unit_tests.h` / `unit_tests.cpp`, com `void run_unit_test_globals(void)`.
+- `test/unit/main.cpp` inclui todos os cabecalhos e chama cada
+  `run_unit_test_...()`.
+- As verificacoes usam `assert`. Uma falha interrompe o programa e mostra
+  o arquivo, a linha e a condicao. O Makefile compila os testes com
+  `-UNDEBUG` para que os `assert` nunca sejam desligados.
 
-Os cabecalhos e fontes contem comentarios `@file`, `@brief`, `@param` e
-`@return` nas operacoes, incluindo os testes. O arquivo `Doxyfile` configura
-HTML, navegacao de fontes, graficos de colaboracao entre classes, hierarquia
-(quando existir heranca) e dependencias de inclusao de arquivos.
+| Arquivo | Testes | Destaques |
+| --- | --- | --- |
+| `unit_tests` | 1 | `executarDemonstracao` e acumulo dos indicadores em duas execucoes |
+| `unit_Restaurante` | 6 | forma canonica e acessores |
+| `unit_Usuario` | 9 | conferencia de senha |
+| `unit_Sessao` | 6 | sessao encerrada e copia invalidada no sistema |
+| `unit_Oferta` | 17 | validacao de campos, reserva e restauracao do saldo |
+| `unit_Reserva` | 15 | estados Pendente, Cancelada e Retirada |
+| `unit_ResumoIndicadores` | 4 | forma canonica |
+| `unit_SistemaSaveFood` | 17 | SB01 a SB06 e reserva concorrente (secao 3.3) |
+| `unit_ServicoAutenticacao` | 6 | entrar e sair |
+| `unit_ServicoAcesso` | 5 | perfil e restaurante de vinculo |
+| `unit_ServicoOfertas` | 7 | SB01 e SB02 |
+| `unit_ServicoReservas` | 7 | SB03 e SB04 |
+| `unit_ServicoRetiradas` | 6 | SB05 |
+| `unit_ServicoIndicadores` | 5 | SB06 |
 
-### Windows
+O teste `unit_SistemaSaveFood_reservar` reproduz a secao 3.3 do Projeto da
+API: uma oferta com 4 unidades e dois consumidores pedindo 3 unidades ao
+mesmo tempo, em duas threads, repetido 200 vezes. Exatamente uma reserva e
+aceita, o saldo nunca fica negativo e o cancelamento do vencedor devolve as
+3 unidades uma unica vez.
 
-1. Instale o [Doxygen](https://www.doxygen.nl/download.html) e o
-   [Graphviz](https://graphviz.org/download/).
-2. Adicione os diretorios dos executaveis `doxygen.exe` e `dot.exe` ao PATH.
-3. Abra o terminal na pasta SaveFood e execute `gerar_documentacao.bat`.
-   O script gera e abre `docs/html/index.html` no navegador.
+Os metodos privados de `SistemaSaveFood` (`prepararContasDemo` e
+`usuarioDaSessaoSemLock`) e o construtor privado de `Sessao` sao testados
+indiretamente, pelo construtor do sistema e por `entrar`.
 
-### Linux
+## Testes funcionais
 
-Com Doxygen e Graphviz instalados, abra o terminal na pasta SaveFood:
+Cada fluxo e implementado em uma funcao separada, declarada em
+`test/funcional/funcional_tests.h` e definida em
+`test/funcional/funcional_tests.cpp`:
+
+| Funcao | Caso de uso | CT-01 | CT-02 |
+| --- | --- | --- | --- |
+| `testeReservarQuantidade` | SB03 | Reserva 2 de 5; saldo 3 e situacao Pendente. | Com saldo 1, reserva de 2 recusada sem novo registro. |
+| `testeCancelarReserva` | SB04 | Reserva propria de 2 cancelada; saldo 3 volta a 5. | Novo cancelamento recusado; saldo continua 5. |
+| `testeConfirmarRetirada` | SB05 | Gerente A confirma 2 unidades, 1 kg e R$ 24; situacao Retirada. | Gerente A nao confirma reserva do restaurante B; dados intactos. |
+
+## Compilacao
+
+No Linux, com `g++`, abra o terminal dentro da pasta `SaveFood`:
 
 ```bash
-make docs
+make
+make test
+./bin/savefood
 ```
 
-Ou execute `doxygen Doxyfile`. Abra `docs/html/index.html` no navegador.
+No Windows, com MinGW-w64 (C++17 e threads POSIX), execute
+`compilar_windows.bat`. O script gera os tres `.exe` em `bin/` e executa os
+testes. O projeto nao depende de bibliotecas externas, somente de C++17 e threads.
 
-### Graficos incluidos
+## Documentacao (Doxygen e Graphviz)
 
-- `docs/graficos/dependencias.svg`: grafo dos includes internos do projeto.
-- `docs/graficos/classes.svg`: estrutura das classes e relacoes existentes.
+Com Doxygen e Graphviz instalados e no PATH:
 
-Os dois SVGs foram gerados separadamente pelo Graphviz e estao prontos para
-visualizacao. Os arquivos `.dot` permitem reproduzir os graficos. Eles nao
-substituem os graficos automaticos do Doxygen. Neste ambiente, o Doxygen nao
-estava instalado e o download foi bloqueado; portanto, o HTML e os graficos
-automaticos do Doxygen ainda precisam ser gerados localmente com o comando acima.
+- Linux: `make docs`
+- Windows: `gerar_documentacao.bat` (gera e abre `doc/html/index.html`)
+
+O `Doxyfile` le `src`, `test` e este README e grava em `doc/html`.
+Os graficos `doc/graficos/dependencias.svg` (includes entre os arquivos) e
+`doc/graficos/classes.svg` (estrutura das classes) foram gerados pelo
+Graphviz a partir dos arquivos `.dot` da mesma pasta.
 
 ## Forma canonica
 
@@ -101,27 +147,7 @@ As seis classes de servico tambem possuem as quatro operacoes canonicas.
 Copias de servicos compartilham o sistema de origem, sem possuir sua memoria;
 o sistema deve permanecer vivo enquanto os servicos o utilizam.
 
-## Compilacao
-
-No Linux com `g++`, abra o terminal dentro da pasta `SaveFood`:
-
-```bash
-make
-make test
-./bin/savefood
-```
-
-Os executaveis sao criados apenas em `bin/`. No Windows com MinGW,
-execute `compilar_windows.bat` no terminal com o `g++` no PATH para
-gerar os tres arquivos `.exe` em `bin/` e executar os testes.
-O projeto nao depende de bibliotecas externas, somente de C++17 e threads.
-Use uma versao do MinGW-w64 com suporte a C++17 e threads POSIX.
-Os binarios sem extensao incluidos no ZIP foram compilados em Linux;
-no Windows, gere os arquivos .exe com o script.
-
-## API alinhada ao projeto da Sprint 2
-
-`include/services.h` e `src/services.cpp` separam as operacoes entre as classes:
+## API alinhada ao Projeto da API (Sprint 2)
 
 - `ServicoAutenticacao`: `entrar`, `sair`.
 - `ServicoAcesso`: `permitir` (verificacao auxiliar; cada operacao tambem valida a sessao).
@@ -130,41 +156,9 @@ no Windows, gere os arquivos .exe com o script.
 - `ServicoRetiradas`: `listar`, `confirmar`.
 - `ServicoIndicadores`: `obterResumo`.
 
-Os tipos `DadosOferta`, `FiltroOferta`, `DadosRetirada`, `Sessao`,
-`Colecao<T>` e `ResumoIndicadores` seguem os contratos simplificados do
-Projeto de API da Sprint 2. Todos os servicos recebem o mesmo
-`SistemaSaveFood` para compartilhar os dados e uma `Sessao` para aplicar
-o perfil de acesso. Os testes funcionais agora exercitam os servicos da API.
-
-O metodo `detalhes` foi incluido para consultar uma oferta pelo ID.
-Os dados continuam em memoria para facilitar a demonstracao da Sprint 3;
-persistencia em banco ou arquivo sera uma etapa posterior.
-
-## Testes funcionais
-
-Cada fluxo e implementado em uma funcao separada, declarada em
-`test/funcional/funcional_tests.h` e definida em
-`test/funcional/funcional_tests.cpp`:
-
-| Funcao | Caso de uso / PDF | CT-01 | CT-02 |
-| --- | --- | --- | --- |
-| `testeReservarQuantidade` | SB03, p. 6 | Reserva 2 de 5; saldo 3 e situacao Pendente. | Com saldo 1, reserva de 2 recusada sem novo registro. |
-| `testeCancelarReserva` | SB04, p. 7 | Reserva propria de 2 cancelada; saldo 3 volta a 5. | Novo cancelamento recusado; saldo continua 5. |
-| `testeConfirmarRetirada` | SB05, p. 8 | Gerente A confirma 2 unidades, 1 kg e R$ 24; situacao Retirada. | Gerente A nao confirma reserva do restaurante B; dados intactos. |
-
-Cada funcao monta seu proprio sistema com dados de demonstracao. Os IDs sao
-obtidos da API, em vez de depender dos IDs ilustrativos do PDF. As verificacoes
-usam os servicos publicos, incluindo a consulta de saldo, sem alterar atributos
-internos. Falhas retornam codigo 1 no main; sucesso retorna 0. As tres funcoes
-sao executadas mesmo quando uma delas falha.
-
-A escolha destes tres casos nao elimina os outros servicos do produto, mas
-esta suite funcional nao executa separadamente SB01, SB02, SB06 ou o teste
-concorrente da secao 3.3 do PDF.
-
-Os testes unitarios verificam copia, atribuicao e validacoes das classes.
-Os tres programas (`src/main.cpp`, `test/unit/main.cpp` e
-`test/funcional/main.cpp`) sao compilados separadamente.
+As operacoes preservam seus retornos: `false` para recusas, `0` para
+publicacao recusada, sessao inativa para login recusado, `-1` para saldo
+inacessivel e colecoes vazias ou resumo zerado para consultas sem acesso.
 
 ## Contas ficticias de demonstracao
 
@@ -181,10 +175,9 @@ Os tres programas (`src/main.cpp`, `test/unit/main.cpp` e
 - O hash simples de senha serve apenas para contas ficticias do exercicio;
   em producao deve ser substituido por Argon2id, scrypt ou PBKDF2.
 - Pagamento e informado pelo gerente na retirada, sem integracao financeira.
-- O peso efetivamente entregue e informado pelo gerente na confirmacao.
-  Retiradas parciais sao recusadas enquanto a regra nao for definida.
+- Retiradas parciais sao recusadas enquanto a regra nao for definida.
 - Doacoes, expiracao e cadastro aberto estao fora do MVP implementado.
-- Dados de retirada sao armazenados na propria Reserva, como na arquitetura
-  existente, sem uma classe Retirada separada.
+- Os dados de retirada ficam na propria `Reserva`; o modelo ER preve uma
+  entidade `Retirada` separada, que ainda nao foi implementada.
 
 Os testes usam exclusivamente dados de demonstracao.

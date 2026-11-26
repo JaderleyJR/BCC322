@@ -13,10 +13,10 @@ if errorlevel 1 (
 )
 doxygen Doxyfile
 if errorlevel 1 exit /b 1
-if not exist docs\html\index.html (
+if not exist doc\html\index.html (
     echo Erro: a pagina inicial nao foi gerada.
     exit /b 1
 )
-echo Documentacao: docs\html\index.html
-start "" "%~dp0docs\html\index.html"
+echo Documentacao: doc\html\index.html
+start "" "%~dp0doc\html\index.html"
 endlocal
