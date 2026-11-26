@@ -3,7 +3,7 @@
  */
 #include <assert.h>
 #include "unit_Restaurante.h"
-#include "../../src/model.h"
+#include "../../src/dominio/model.h"
 
 void unit_Restaurante_constructor(void) {
     Restaurante padrao;

@@ -5,6 +5,50 @@ O codigo implementa o fluxo comercial minimo definido no backlog: acesso,
 publicacao, consulta, reserva, cancelamento, confirmacao presencial e
 indicadores basicos (SB01 a SB06 do Projeto da API).
 
+**Sprint 7 - Arquitetura em camadas: componentizacao + fabricas.** Cada camada
+do produto e um componente separado (biblioteca compartilhada: `.so` no Linux,
+`.dll` no Windows). As camadas superiores conhecem as inferiores apenas por
+interfaces abstratas e obtem os objetos por fabricas.
+
+## Arquitetura em camadas
+
+![Camadas](doc/graficos/camadas.svg)
+
+| Camada | Pasta | Componente | Interface publica | Fabrica |
+| --- | --- | --- | --- | --- |
+| 4 Apresentacao | `src/main.cpp`, `src/apresentacao/` | `bin/savefood` (executavel) | - | - |
+| 3 Servicos | `src/servicos/` | `libsavefood_servicos.so` / `savefood_servicos.dll` | `servicos_api.h`: `IServicoAutenticacao`, `IServicoAcesso`, `IServicoOfertas`, `IServicoReservas`, `IServicoRetiradas`, `IServicoIndicadores` | `FabricaServicos` |
+| 2 Nucleo | `src/nucleo/` | `libsavefood_nucleo.so` / `savefood_nucleo.dll` | `sistema_api.h`: `ISistemaSaveFood` | `FabricaSistema` |
+| 1 Dominio | `src/dominio/` | `libsavefood_dominio.so` / `savefood_dominio.dll` | `model.h`: `Restaurante`, `Usuario`, `Sessao`, `Oferta`, `Reserva`, `ResumoIndicadores` | - |
+
+Regras seguidas:
+
+- **Dependencia so para baixo.** Cada camada inclui apenas cabecalhos da
+  camada imediatamente inferior (ou do dominio). Nenhuma camada inclui algo
+  de uma camada superior.
+- **Dependencia por abstracao.** A apresentacao inclui somente
+  `servicos_api.h` (que traz `sistema_api.h`); ela nunca ve `SistemaSaveFood`
+  nem `ServicoOfertas`. Os servicos guardam um `ISistemaSaveFood*`, nao a
+  classe concreta: por isso `libsavefood_servicos.so` nem precisa do nucleo
+  para ser carregada (`readelf -d` lista apenas o dominio).
+- **Fabricas como unico ponto de criacao.** `FabricaSistema::criarSistema()`
+  e `FabricaServicos::criar...()` devolvem `std::unique_ptr` para a
+  interface. Trocar o sistema em memoria por uma versao com banco de dados
+  exigira alterar so a fabrica do nucleo; a apresentacao e os servicos nao
+  mudam. As fabricas tem construtor removido (`= delete`), pois so possuem
+  metodos estaticos.
+- **Visibilidade controlada.** As bibliotecas sao compiladas com
+  `-fvisibility=hidden` (Linux) e `__declspec(dllexport)` (Windows), via
+  `src/exportacao.h`. So as classes marcadas com `SAVEFOOD_<CAMADA>_API` sao
+  exportadas; funcoes internas, como `paraMinusculas` e o hash de senha,
+  ficam invisiveis fora do componente (`make simbolos` lista o que cada um exporta).
+- **Interfaces com destrutor virtual.** Os destrutores das interfaces sao
+  definidos nas fabricas (`fabrica_*.cpp`), ancorando a tabela virtual e as
+  informacoes de tipo dentro do proprio componente.
+- As classes concretas continuam exportadas apenas para os **testes unitarios
+  de caixa-branca**. Os **testes funcionais sao de caixa-preta**: usam somente
+  fabricas e interfaces, como a apresentacao.
+
 ## Arvore de diretorios
 
 O repositorio recebe o nome do produto. O codigo do produto fica em `src`,
@@ -13,13 +57,21 @@ um para o produto, um para os testes funcionais e um para os testes unitarios.
 
 ```text
 SaveFood/
-|-- bin/                          # Executaveis gerados pela compilacao
-|-- src/                          # Produto (cabecalhos e implementacoes)
-|   |-- main.cpp
-|   |-- model.h / model.cpp       # Restaurante, Usuario, Sessao, Oferta, Reserva, ResumoIndicadores
-|   |-- system.h / system.cpp     # SistemaSaveFood
-|   |-- services.h / services.cpp # Servicos da API
-|   `-- flow.h / flow.cpp         # executarDemonstracao (funcao global)
+|-- bin/                          # Componentes (.so/.dll) e executaveis gerados
+|-- src/                          # Produto
+|   |-- main.cpp                  # Camada 4 - ponto de entrada
+|   |-- exportacao.h              # Macros de exportacao dos componentes
+|   |-- apresentacao/             # Camada 4 - flow.h / flow.cpp (executarDemonstracao)
+|   |-- servicos/                 # Camada 3 - componente savefood_servicos
+|   |   |-- servicos_api.h        #   interfaces IServico*, tipos de entrada, FabricaServicos
+|   |   |-- services.h / .cpp     #   implementacoes Servico*
+|   |   `-- fabrica_servicos.cpp
+|   |-- nucleo/                   # Camada 2 - componente savefood_nucleo
+|   |   |-- sistema_api.h         #   interface ISistemaSaveFood, FabricaSistema
+|   |   |-- system.h / .cpp       #   implementacao SistemaSaveFood
+|   |   `-- fabrica_sistema.cpp
+|   `-- dominio/                  # Camada 1 - componente savefood_dominio
+|       `-- model.h / model.cpp   #   Restaurante, Usuario, Sessao, Oferta, Reserva, ResumoIndicadores
 |-- test/
 |   |-- unit/
 |   |   |-- main.cpp
@@ -36,7 +88,9 @@ SaveFood/
 |   |   |-- unit_ServicoOfertas.h / unit_ServicoOfertas.cpp
 |   |   |-- unit_ServicoReservas.h / unit_ServicoReservas.cpp
 |   |   |-- unit_ServicoRetiradas.h / unit_ServicoRetiradas.cpp
-|   |   `-- unit_ServicoIndicadores.h / unit_ServicoIndicadores.cpp
+|   |   |-- unit_ServicoIndicadores.h / unit_ServicoIndicadores.cpp
+|   |   |-- unit_FabricaSistema.h / unit_FabricaSistema.cpp
+|   |   `-- unit_FabricaServicos.h / unit_FabricaServicos.cpp
 |   `-- funcional/
 |       |-- main.cpp
 |       |-- funcional_tests.h
@@ -52,7 +106,7 @@ SaveFood/
 ```
 
 Os testes incluem o produto por caminho relativo, por exemplo
-`#include "../../src/system.h"`, por isso a compilacao nao precisa de `-I`.
+`#include "../../src/nucleo/system.h"`, por isso a compilacao nao precisa de `-I`.
 
 ## Testes unitarios
 
@@ -88,6 +142,8 @@ Convencoes adotadas:
 | `unit_ServicoReservas` | 7 | SB03 e SB04 |
 | `unit_ServicoRetiradas` | 6 | SB05 |
 | `unit_ServicoIndicadores` | 5 | SB06 |
+| `unit_FabricaSistema` | 2 | fabrica nao instanciavel; instancias novas e independentes |
+| `unit_FabricaServicos` | 7 | cada fabrica entrega a implementacao certa ligada ao sistema e a sessao |
 
 O teste `unit_SistemaSaveFood_reservar` reproduz a secao 3.3 do Projeto da
 API: uma oferta com 4 unidades e dois consumidores pedindo 3 unidades ao
@@ -101,6 +157,8 @@ indiretamente, pelo construtor do sistema e por `entrar`.
 
 ## Testes funcionais
 
+Sao testes de caixa-preta: criam o sistema com `FabricaSistema` e os
+servicos com `FabricaServicos`, usando so as interfaces publicas.
 Cada fluxo e implementado em uma funcao separada, declarada em
 `test/funcional/funcional_tests.h` e definida em
 `test/funcional/funcional_tests.cpp`:
@@ -116,14 +174,18 @@ Cada fluxo e implementado em uma funcao separada, declarada em
 No Linux, com `g++`, abra o terminal dentro da pasta `SaveFood`:
 
 ```bash
-make
-make test
+make            # gera as 3 bibliotecas .so e os 3 executaveis em bin/
+make test       # executa os testes unitarios e funcionais
+make simbolos   # quantidade de simbolos exportados por componente
 ./bin/savefood
 ```
 
+Os executaveis procuram as bibliotecas na propria pasta `bin/` (rpath `$ORIGIN`).
+
 No Windows, com MinGW-w64 (C++17 e threads POSIX), execute
-`compilar_windows.bat`. O script gera os tres `.exe` em `bin/` e executa os
-testes. O projeto nao depende de bibliotecas externas, somente de C++17 e threads.
+`compilar_windows.bat`. O script gera as tres DLLs (com as bibliotecas de
+importacao `.dll.a`) e os tres `.exe` em `bin/`, e executa os testes. As DLLs
+precisam ficar na mesma pasta dos `.exe`. O projeto nao depende de bibliotecas externas, somente de C++17 e threads.
 
 ## Documentacao (Doxygen e Graphviz)
 
@@ -133,8 +195,9 @@ Com Doxygen e Graphviz instalados e no PATH:
 - Windows: `gerar_documentacao.bat` (gera e abre `doc/html/index.html`)
 
 O `Doxyfile` le `src`, `test` e este README e grava em `doc/html`.
-Os graficos `doc/graficos/dependencias.svg` (includes entre os arquivos) e
-`doc/graficos/classes.svg` (estrutura das classes) foram gerados pelo
+Os graficos `doc/graficos/camadas.svg` (arquitetura em camadas),
+`doc/graficos/dependencias.svg` (includes entre os arquivos) e
+`doc/graficos/classes.svg` (classes, interfaces e fabricas) foram gerados pelo
 Graphviz a partir dos arquivos `.dot` da mesma pasta.
 
 ## Forma canonica
@@ -144,6 +207,8 @@ As classes concretas `Restaurante`, `Usuario`, `Sessao`, `Oferta`, `Reserva` e
 operador de atribuicao e destrutor. Em `SistemaSaveFood`, a copia dos
 dados e protegida porque a classe possui um `std::mutex`.
 As seis classes de servico tambem possuem as quatro operacoes canonicas.
+As interfaces declaram construtores e atribuicao como `protected`, para que
+so as implementacoes possam usa-los.
 Copias de servicos compartilham o sistema de origem, sem possuir sua memoria;
 o sistema deve permanecer vivo enquanto os servicos o utilizam.
 

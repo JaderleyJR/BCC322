@@ -1,7 +1,0 @@
-<map id="test/funcional/funcional_tests.h" name="test/funcional/funcional_tests.h">
-<area shape="rect" id="Node000001" title="Declaracoes dos tres testes funcionais da Sprint 3." alt="" coords="95,5,250,48"/>
-<area shape="rect" id="Node000002" href="$funcional__tests_8cpp.html" title="Cenarios de aceitacao de SB03, SB04 e SB05." alt="" coords="5,96,161,139"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,58,105,98,102,94,138,60"/>
-<area shape="rect" id="Node000003" href="$test_2funcional_2main_8cpp.html" title="Ponto de entrada dos testes funcionais." alt="" coords="185,104,341,131"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="205,57,253,104,248,103,203,62"/>
-</map>

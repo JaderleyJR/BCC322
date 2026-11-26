@@ -5,7 +5,7 @@
 #include <cmath>
 #include <limits>
 #include "unit_Oferta.h"
-#include "../../src/model.h"
+#include "../../src/dominio/model.h"
 
 namespace {
 /** @brief Oferta valida usada como base: 5 marmitas, 2,5 kg, R$ 12, 18h-19h. */

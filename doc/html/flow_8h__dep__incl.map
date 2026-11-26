@@ -1,9 +1,0 @@
-<map id="include/flow.h" name="include/flow.h">
-<area shape="rect" id="Node000001" title="Declaracao do fluxo demonstrativo." alt="" coords="118,5,218,32"/>
-<area shape="rect" id="Node000002" href="$flow_8cpp.html" title="Implementacao da demonstracao e tratamento de falhas." alt="" coords="5,80,97,107"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,41,73,82,70,77,133,39"/>
-<area shape="rect" id="Node000003" href="$src_2main_8cpp.html" title="Ponto de entrada da demonstracao do SaveFood." alt="" coords="120,80,216,107"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="170,46,171,81,166,78,166,50"/>
-<area shape="rect" id="Node000004" href="$test_2funcional_2main_8cpp.html" title="Ponto de entrada dos testes funcionais." alt="" coords="241,80,397,107"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="209,36,295,79,290,80,207,42"/>
-</map>

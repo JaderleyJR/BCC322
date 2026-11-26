@@ -3,7 +3,8 @@
  */
 #include <assert.h>
 #include "unit_ServicoOfertas.h"
-#include "../../src/services.h"
+#include "../../src/servicos/services.h"
+#include "../../src/nucleo/system.h"  // teste de caixa-branca: usa a classe concreta
 
 namespace {
 const DadosOferta MARMITA{"Marmita", 5, 2.5, 12.0, "18h-19h"};

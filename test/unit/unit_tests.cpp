@@ -10,7 +10,8 @@
 #include <sstream>
 #include <string>
 #include "unit_tests.h"
-#include "../../src/flow.h"
+#include "../../src/apresentacao/flow.h"
+#include "../../src/nucleo/system.h"  // teste de caixa-branca: usa a classe concreta
 
 namespace {
 bool contem(const std::string& texto, const std::string& trecho) {

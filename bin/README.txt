@@ -1,4 +1,12 @@
-Esta pasta guarda os executaveis compilados do projeto.
+Esta pasta guarda os componentes e executaveis compilados do projeto.
 
-Linux: savefood, testes_funcionais, testes_unitarios (gerados com "make").
-Windows (MinGW): os mesmos nomes com extensao .exe (gerados com compilar_windows.bat).
+Linux ("make"):
+  libsavefood_dominio.so   libsavefood_nucleo.so   libsavefood_servicos.so
+  savefood   testes_unitarios   testes_funcionais
+
+Windows ("compilar_windows.bat"):
+  savefood_dominio.dll   savefood_nucleo.dll   savefood_servicos.dll
+  (e as bibliotecas de importacao libsavefood_*.dll.a)
+  savefood.exe   testes_unitarios.exe   testes_funcionais.exe
+
+As bibliotecas precisam ficar na mesma pasta dos executaveis.

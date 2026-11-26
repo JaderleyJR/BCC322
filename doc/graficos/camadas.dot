@@ -1,0 +1,37 @@
+digraph Camadas {
+  graph [rankdir=TB, bgcolor="white", pad=.35, nodesep=.35, ranksep=.55, fontname="Arial", fontsize=20,
+         label="SaveFood - Arquitetura em camadas (Sprint 7)", labelloc=t, newrank=true];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, color="#475569", penwidth=1.2];
+  edge [color="#475569", arrowsize=.7, fontname="Arial", fontsize=9];
+
+  subgraph cluster_ap { label="Camada 4 - Apresentacao   (bin/savefood, executavel)"; style="rounded,filled"; fillcolor="#f8fafc"; color="#94a3b8"; fontsize=13;
+    main [label="main.cpp", fillcolor="#e2e8f0"];
+    flow [label="executarDemonstracao()\nflow.h / flow.cpp", fillcolor="#e2e8f0"];
+  }
+  subgraph cluster_sv { label="Camada 3 - Servicos   (libsavefood_servicos.so / savefood_servicos.dll)"; style="rounded,filled"; fillcolor="#f0fdf4"; color="#86efac"; fontsize=13;
+    api_sv [label="servicos_api.h  (publico)\nIServicoAutenticacao  IServicoAcesso  IServicoOfertas\nIServicoReservas  IServicoRetiradas  IServicoIndicadores\nDadosOferta  FiltroOferta  DadosRetirada", fillcolor="#bbf7d0"];
+    fab_sv [label="FabricaServicos\ncriarAutenticacao() criarAcesso() criarOfertas()\ncriarReservas() criarRetiradas() criarIndicadores()", fillcolor="#86efac", shape=component];
+    imp_sv [label="services.h / services.cpp  (implementacao)\nServicoAutenticacao  ServicoAcesso  ServicoOfertas\nServicoReservas  ServicoRetiradas  ServicoIndicadores", fillcolor="#dcfce7"];
+  }
+  subgraph cluster_nu { label="Camada 2 - Nucleo   (libsavefood_nucleo.so / savefood_nucleo.dll)"; style="rounded,filled"; fillcolor="#eff6ff"; color="#93c5fd"; fontsize=13;
+    api_nu [label="sistema_api.h  (publico)\nISistemaSaveFood", fillcolor="#bfdbfe"];
+    fab_nu [label="FabricaSistema\ncriarSistema()", fillcolor="#93c5fd", shape=component];
+    imp_nu [label="system.h / system.cpp  (implementacao)\nSistemaSaveFood  (dados em memoria + mutex)", fillcolor="#dbeafe"];
+  }
+  subgraph cluster_do { label="Camada 1 - Dominio   (libsavefood_dominio.so / savefood_dominio.dll)"; style="rounded,filled"; fillcolor="#fffbeb"; color="#fcd34d"; fontsize=13;
+    dom [label="model.h / model.cpp\nRestaurante  Usuario  Sessao  Oferta  Reserva  ResumoIndicadores\nPerfil  EstadoReserva", fillcolor="#fde68a"];
+  }
+
+  main -> flow [label=" chama"];
+  main -> fab_nu [label=" cria o sistema", constraint=false, color="#64748b", style=bold];
+  flow -> fab_sv [label=" cria os servicos"];
+  flow -> api_sv [label=" usa apenas interfaces"];
+  fab_sv -> imp_sv [label=" instancia", style=dashed];
+  imp_sv -> api_sv [label=" implementa", arrowhead=empty];
+  imp_sv -> api_nu [label=" depende so da interface"];
+  fab_nu -> imp_nu [label=" instancia", style=dashed];
+  imp_nu -> api_nu [label=" implementa", arrowhead=empty];
+  api_nu -> dom [label=" usa entidades"];
+  imp_nu -> dom;
+  api_sv -> fab_nu [style=invis, weight=10];
+}

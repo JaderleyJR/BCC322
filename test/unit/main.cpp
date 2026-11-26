@@ -21,6 +21,8 @@
 #include "unit_ServicoReservas.h"
 #include "unit_ServicoRetiradas.h"
 #include "unit_ServicoIndicadores.h"
+#include "unit_FabricaSistema.h"
+#include "unit_FabricaServicos.h"
 
 #ifdef NDEBUG
 #error "Os testes unitarios usam assert: compile sem -DNDEBUG."
@@ -44,6 +46,8 @@ int main() {
     run_unit_test_ServicoReservas();       std::cout << "[OK] ServicoReservas\n";
     run_unit_test_ServicoRetiradas();      std::cout << "[OK] ServicoRetiradas\n";
     run_unit_test_ServicoIndicadores();    std::cout << "[OK] ServicoIndicadores\n";
+    run_unit_test_FabricaSistema();        std::cout << "[OK] FabricaSistema\n";
+    run_unit_test_FabricaServicos();       std::cout << "[OK] FabricaServicos\n";
 
     std::cout << "Todos os testes unitarios passaram.\n";
     return 0;

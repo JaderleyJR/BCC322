@@ -6,7 +6,7 @@
  */
 #include <assert.h>
 #include "unit_Sessao.h"
-#include "../../src/system.h"
+#include "../../src/nucleo/system.h"
 
 void unit_Sessao_constructor(void) {
     Sessao padrao;

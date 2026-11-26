@@ -3,7 +3,7 @@
  */
 #include <assert.h>
 #include "unit_Usuario.h"
-#include "../../src/model.h"
+#include "../../src/dominio/model.h"
 
 void unit_Usuario_constructor(void) {
     Usuario padrao;

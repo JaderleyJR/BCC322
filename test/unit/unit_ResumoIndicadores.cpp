@@ -3,7 +3,7 @@
  */
 #include <assert.h>
 #include "unit_ResumoIndicadores.h"
-#include "../../src/model.h"
+#include "../../src/dominio/model.h"
 
 void unit_ResumoIndicadores_constructor(void) {
     ResumoIndicadores r;

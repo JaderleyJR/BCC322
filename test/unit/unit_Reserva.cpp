@@ -5,7 +5,7 @@
 #include <cmath>
 #include <limits>
 #include "unit_Reserva.h"
-#include "../../src/model.h"
+#include "../../src/dominio/model.h"
 
 namespace {
 bool quase(double a, double b) { return std::fabs(a - b) < 1e-9; }

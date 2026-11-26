@@ -3,7 +3,8 @@
  */
 #include <assert.h>
 #include "unit_ServicoReservas.h"
-#include "../../src/services.h"
+#include "../../src/servicos/services.h"
+#include "../../src/nucleo/system.h"  // teste de caixa-branca: usa a classe concreta
 
 namespace {
 /** @brief Publica 5 marmitas pelo gerente A e retorna o ID da oferta. */

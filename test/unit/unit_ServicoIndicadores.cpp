@@ -4,7 +4,8 @@
 #include <assert.h>
 #include <cmath>
 #include "unit_ServicoIndicadores.h"
-#include "../../src/services.h"
+#include "../../src/servicos/services.h"
+#include "../../src/nucleo/system.h"  // teste de caixa-branca: usa a classe concreta
 
 namespace {
 bool quase(double a, double b) { return std::fabs(a - b) < 1e-9; }

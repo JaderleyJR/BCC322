@@ -1,6 +1,6 @@
 # SaveFood - Sprint 4
 PROJECT_NAME           = "SaveFood"
-PROJECT_NUMBER         = "Sprint 4"
+PROJECT_NUMBER         = "Sprint 7"
 PROJECT_BRIEF          = "API de aproveitamento de excedentes alimentares"
 OUTPUT_DIRECTORY       = doc
 OUTPUT_LANGUAGE        = Brazilian
@@ -33,8 +33,11 @@ WARN_IF_UNDOCUMENTED   = NO
 WARN_NO_PARAMDOC       = NO
 WARN_LOGFILE           = doc/doxygen_warnings.log
 ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = SAVEFOOD_DOMINIO_API= SAVEFOOD_NUCLEO_API= SAVEFOOD_SERVICOS_API=
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = src test/unit test/funcional
+INCLUDE_PATH           = src src/dominio src/nucleo src/servicos src/apresentacao test/unit test/funcional
 # Graphviz: graficos de classes, colaboracao e dependencias de arquivos.
 HAVE_DOT               = YES
 CLASS_GRAPH            = YES

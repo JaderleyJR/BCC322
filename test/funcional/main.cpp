@@ -2,9 +2,6 @@
  * @brief Ponto de entrada dos testes funcionais.
  */
 #include "funcional_tests.h"
-#include "../../src/model.h"
-#include "../../src/system.h"
-#include "../../src/flow.h"
 
 #include <iostream>
 

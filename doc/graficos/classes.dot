@@ -1,5 +1,5 @@
 digraph Classes {
-  graph [rankdir=LR, bgcolor="white", pad=.25, nodesep=.24, ranksep=.65, fontname="Arial", fontsize=18, label="SaveFood - Estrutura de classes", labelloc=t];
+  graph [rankdir=LR, bgcolor="white", pad=.25, nodesep=.24, ranksep=.65, fontname="Arial", fontsize=18, label="SaveFood - Estrutura de classes (interfaces e fabricas)", labelloc=t];
   node [shape=record, style=filled, fillcolor="#f1f5f9", color="#64748b", fontname="Arial", fontsize=10];
   edge [color="#64748b", fontname="Arial", fontsize=9, arrowsize=.65];
   SistemaSaveFood [label="{SistemaSaveFood|mutex_\lrestaurantes_\lusuarios_\lofertas_\lreservas_\lsessoesAtivas_\l|entrar() / sair()\lpublicarOferta()\lreservar() / cancelarReserva()\lconfirmarRetirada()\lobterResumo()\l}", fillcolor="#dbeafe"];
@@ -18,15 +18,15 @@ digraph Classes {
   ServicoReservas [label="{ServicoReservas|reservar()\lcancelar()\lminhasReservas()\l}", fillcolor="#dcfce7"];
   ServicoRetiradas [label="{ServicoRetiradas|listar()\lconfirmar()\l}", fillcolor="#dcfce7"];
   ServicoIndicadores [label="{ServicoIndicadores|obterResumo()\l}", fillcolor="#dcfce7"];
-  ServicoAutenticacao -> SistemaSaveFood [label="sistema_", arrowhead=vee];
-  ServicoAcesso -> SistemaSaveFood [label="sistema_", arrowhead=vee];
-  ServicoOfertas -> SistemaSaveFood [label="sistema_", arrowhead=vee];
+  ServicoAutenticacao -> ISistemaSaveFood [label="sistema_", arrowhead=vee];
+  ServicoAcesso -> ISistemaSaveFood [label="sistema_", arrowhead=vee];
+  ServicoOfertas -> ISistemaSaveFood [label="sistema_", arrowhead=vee];
   ServicoOfertas -> Sessao [label="sessao_", dir=both, arrowtail=diamond, arrowhead=none];
-  ServicoReservas -> SistemaSaveFood [label="sistema_", arrowhead=vee];
+  ServicoReservas -> ISistemaSaveFood [label="sistema_", arrowhead=vee];
   ServicoReservas -> Sessao [label="sessao_", dir=both, arrowtail=diamond, arrowhead=none];
-  ServicoRetiradas -> SistemaSaveFood [label="sistema_", arrowhead=vee];
+  ServicoRetiradas -> ISistemaSaveFood [label="sistema_", arrowhead=vee];
   ServicoRetiradas -> Sessao [label="sessao_", dir=both, arrowtail=diamond, arrowhead=none];
-  ServicoIndicadores -> SistemaSaveFood [label="sistema_", arrowhead=vee];
+  ServicoIndicadores -> ISistemaSaveFood [label="sistema_", arrowhead=vee];
   ServicoIndicadores -> Sessao [label="sessao_", dir=both, arrowtail=diamond, arrowhead=none];
   SistemaSaveFood -> Restaurante [label="0..N", dir=both, arrowtail=diamond, arrowhead=none];
   SistemaSaveFood -> Usuario [label="0..N", dir=both, arrowtail=diamond, arrowhead=none];
@@ -37,4 +37,27 @@ digraph Classes {
   ServicoOfertas -> FiltroOferta [style=dashed, arrowhead=vee];
   ServicoRetiradas -> DadosRetirada [style=dashed, arrowhead=vee];
   ServicoIndicadores -> ResumoIndicadores [style=dashed, arrowhead=vee];
+  ISistemaSaveFood [label="{\<\<interface\>\>\nISistemaSaveFood|entrar() / sair()\lpublicarOferta() ...\l}", fillcolor="#bfdbfe", style="filled,dashed"];
+  FabricaSistema [label="{FabricaSistema|+criarSistema()\l}", fillcolor="#93c5fd"];
+  FabricaServicos [label="{FabricaServicos|+criarAutenticacao()\l+criarAcesso()\l+criarOfertas()\l+criarReservas()\l+criarRetiradas()\l+criarIndicadores()\l}", fillcolor="#86efac"];
+  SistemaSaveFood -> ISistemaSaveFood [arrowhead=empty, style=dashed];
+  FabricaSistema -> ISistemaSaveFood [label="cria", style=dashed, arrowhead=vee];
+  IServicoAutenticacao [label="{\<\<interface\>\>\nIServicoAutenticacao}", fillcolor="#bbf7d0", style="filled,dashed"];
+  ServicoAutenticacao -> IServicoAutenticacao [arrowhead=empty, style=dashed];
+  FabricaServicos -> IServicoAutenticacao [style=dotted, arrowhead=vee];
+  IServicoAcesso [label="{\<\<interface\>\>\nIServicoAcesso}", fillcolor="#bbf7d0", style="filled,dashed"];
+  ServicoAcesso -> IServicoAcesso [arrowhead=empty, style=dashed];
+  FabricaServicos -> IServicoAcesso [style=dotted, arrowhead=vee];
+  IServicoOfertas [label="{\<\<interface\>\>\nIServicoOfertas}", fillcolor="#bbf7d0", style="filled,dashed"];
+  ServicoOfertas -> IServicoOfertas [arrowhead=empty, style=dashed];
+  FabricaServicos -> IServicoOfertas [style=dotted, arrowhead=vee];
+  IServicoReservas [label="{\<\<interface\>\>\nIServicoReservas}", fillcolor="#bbf7d0", style="filled,dashed"];
+  ServicoReservas -> IServicoReservas [arrowhead=empty, style=dashed];
+  FabricaServicos -> IServicoReservas [style=dotted, arrowhead=vee];
+  IServicoRetiradas [label="{\<\<interface\>\>\nIServicoRetiradas}", fillcolor="#bbf7d0", style="filled,dashed"];
+  ServicoRetiradas -> IServicoRetiradas [arrowhead=empty, style=dashed];
+  FabricaServicos -> IServicoRetiradas [style=dotted, arrowhead=vee];
+  IServicoIndicadores [label="{\<\<interface\>\>\nIServicoIndicadores}", fillcolor="#bbf7d0", style="filled,dashed"];
+  ServicoIndicadores -> IServicoIndicadores [arrowhead=empty, style=dashed];
+  FabricaServicos -> IServicoIndicadores [style=dotted, arrowhead=vee];
 }

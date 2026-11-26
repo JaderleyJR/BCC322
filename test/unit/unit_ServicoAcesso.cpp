@@ -3,7 +3,8 @@
  */
 #include <assert.h>
 #include "unit_ServicoAcesso.h"
-#include "../../src/services.h"
+#include "../../src/servicos/services.h"
+#include "../../src/nucleo/system.h"  // teste de caixa-branca: usa a classe concreta
 
 void unit_ServicoAcesso_constructor(void) {
     SistemaSaveFood sistema;
