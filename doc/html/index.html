@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SaveFood: SaveFood - Sprint 4</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">SaveFood<span id="projectnumber">&#160;Sprint 4</span>
+   </div>
+   <div id="projectbrief">API de aproveitamento de excedentes alimentares</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Busca" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('index.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Carregando...</div>
+<div class="SRStatus" id="Searching">Procurando...</div>
+<div class="SRStatus" id="NoMatches">Nenhuma entrada encontrado</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">SaveFood - Sprint 4 </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="md__r_e_a_d_m_e"></a></p>
+<p>Projeto em C++17 para a disciplina de Engenharia de Software da UFOP. O codigo implementa o fluxo comercial minimo definido no backlog: acesso, publicacao, consulta, reserva, cancelamento, confirmacao presencial e indicadores basicos.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+Arvore de diretorios</h1>
+<div class="fragment"><div class="line">SaveFood/</div>
+<div class="line">|-- bin/                       # Executaveis</div>
+<div class="line">|-- include/                   # Cabecalhos originais do produto</div>
+<div class="line">|   |-- model.h</div>
+<div class="line">|   |-- system.h</div>
+<div class="line">|   |-- services.h</div>
+<div class="line">|   `-- flow.h</div>
+<div class="line">|-- src/                       # Implementacoes originais</div>
+<div class="line">|   |-- main.cpp</div>
+<div class="line">|   |-- model.cpp</div>
+<div class="line">|   |-- system.cpp</div>
+<div class="line">|   |-- services.cpp</div>
+<div class="line">|   `-- flow.cpp</div>
+<div class="line">|-- test/</div>
+<div class="line">|   |-- funcional/</div>
+<div class="line">|   |   |-- main.cpp</div>
+<div class="line">|   |   |-- funcional_tests.h</div>
+<div class="line">|   |   `-- funcional_tests.cpp</div>
+<div class="line">|   `-- unit/</div>
+<div class="line">|       |-- main.cpp</div>
+<div class="line">|       |-- unit_tests.h</div>
+<div class="line">|       `-- unit_tests.cpp</div>
+<div class="line">|-- docs/</div>
+<div class="line">|   |-- graficos/              # Diagramas SVG e fontes DOT</div>
+<div class="line">|   `-- html/                  # Gerado pelo Doxygen</div>
+<div class="line">|-- Doxyfile</div>
+<div class="line">|-- Makefile</div>
+<div class="line">|-- compilar_windows.bat</div>
+<div class="line">|-- gerar_documentacao.bat</div>
+<div class="line">`-- README.md</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
+Modularizacao e tratamento de erros</h1>
+<p>Somente os quatro cabecalhos do produto foram movidos para <span class="tt">include/</span>. Os cabecalhos de teste permanecem nos respectivos diretorios. A compilacao usa <span class="tt">-Iinclude</span>, sem criar classes, funcoes ou assinaturas novas.</p>
+<p>As operacoes existentes preservam seus retornos: <span class="tt">false</span> para recusas, <span class="tt">0</span> para publicacao recusada, sessao inativa para login recusado, <span class="tt">-1</span> para saldo inacessivel e colecoes vazias ou resumo zerado para consultas sem acesso. As consultas vazias nao distinguem falta de acesso de ausencia de registros. Foram reforcadas as validacoes de dados em branco, limites de IDs, estoque e estados da reserva. A publicacao desfaz a insercao se houver uma excecao durante a copia do resultado. A demonstracao informa a falha, encerra as sessoes e o programa principal trata excecoes e retorna 1. As verificacoes de acesso e os controles de concorrencia existentes foram mantidos.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+Sprint 4 - Doxygen e Graphviz</h1>
+<p>Os cabecalhos e fontes contem comentarios <span class="tt">@file</span>, <span class="tt">@brief</span>, <span class="tt">@param</span> e <span class="tt">@return</span> nas operacoes, incluindo os testes. O arquivo <span class="tt">Doxyfile</span> configura HTML, navegacao de fontes, graficos de colaboracao entre classes, hierarquia (quando existir heranca) e dependencias de inclusao de arquivos.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+Windows</h2>
+<ol type="1">
+<li>Instale o <a href="https://www.doxygen.nl/download.html">Doxygen</a> e o <a href="https://graphviz.org/download/">Graphviz</a>.</li>
+<li>Adicione os diretorios dos executaveis <span class="tt">doxygen.exe</span> e <span class="tt">dot.exe</span> ao PATH.</li>
+<li>Abra o terminal na pasta SaveFood e execute <span class="tt">gerar_documentacao.bat</span>. O script gera e abre <span class="tt">docs/html/index.html</span> no navegador.</li>
+</ol>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+Linux</h2>
+<p>Com Doxygen e Graphviz instalados, abra o terminal na pasta SaveFood:</p>
+<div class="fragment"><div class="line">make docs</div>
+</div><!-- fragment --><p>Ou execute <span class="tt">doxygen Doxyfile</span>. Abra <span class="tt">docs/html/index.html</span> no navegador.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+Graficos incluidos</h2>
+<ul>
+<li><span class="tt">docs/graficos/dependencias.svg</span>: grafo dos includes internos do projeto.</li>
+<li><span class="tt">docs/graficos/classes.svg</span>: estrutura das classes e relacoes existentes.</li>
+</ul>
+<p>Os dois SVGs foram gerados separadamente pelo Graphviz e estao prontos para visualizacao. Os arquivos <span class="tt">.dot</span> permitem reproduzir os graficos. Eles nao substituem os graficos automaticos do Doxygen. Neste ambiente, o Doxygen nao estava instalado e o download foi bloqueado; portanto, o HTML e os graficos automaticos do Doxygen ainda precisam ser gerados localmente com o comando acima.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+Forma canonica</h1>
+<p>As classes concretas <span class="tt"><a class="el" href="class_restaurante.html" title="Estabelecimento responsavel pelas ofertas comerciais.">Restaurante</a></span>, <span class="tt"><a class="el" href="class_usuario.html" title="Conta de gerente ou consumidor, com credenciais de demonstracao.">Usuario</a></span>, <span class="tt"><a class="el" href="class_sessao.html" title="Identificacao temporaria de um usuario autenticado.">Sessao</a></span>, <span class="tt"><a class="el" href="class_oferta.html" title="Lote comercial com quantidade, peso, preco e janela de retirada.">Oferta</a></span>, <span class="tt"><a class="el" href="class_reserva.html" title="Reserva de unidades de uma oferta e registro da eventual retirada.">Reserva</a></span> e <span class="tt"><a class="el" href="class_sistema_save_food.html" title="Centraliza o dominio em memoria e protege as operacoes com mutex.">SistemaSaveFood</a></span> possuem construtor padrao, construtor de copia, operador de atribuicao e destrutor. Em <span class="tt"><a class="el" href="class_sistema_save_food.html" title="Centraliza o dominio em memoria e protege as operacoes com mutex.">SistemaSaveFood</a></span>, a copia dos dados e protegida porque a classe possui um <span class="tt">std::mutex</span>. As seis classes de servico tambem possuem as quatro operacoes canonicas. Copias de servicos compartilham o sistema de origem, sem possuir sua memoria; o sistema deve permanecer vivo enquanto os servicos o utilizam.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+Compilacao</h1>
+<p>No Linux com <span class="tt">g++</span>, abra o terminal dentro da pasta <span class="tt">SaveFood</span>:</p>
+<div class="fragment"><div class="line">make</div>
+<div class="line">make test</div>
+<div class="line">./bin/savefood</div>
+</div><!-- fragment --><p>Os executaveis sao criados apenas em <span class="tt">bin/</span>. No Windows com MinGW, execute <span class="tt">compilar_windows.bat</span> no terminal com o <span class="tt">g++</span> no PATH para gerar os tres arquivos <span class="tt">.exe</span> em <span class="tt">bin/</span> e executar os testes. O projeto nao depende de bibliotecas externas, somente de C++17 e threads. Use uma versao do MinGW-w64 com suporte a C++17 e threads POSIX. Os binarios sem extensao incluidos no ZIP foram compilados em Linux; no Windows, gere os arquivos .exe com o script.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+API alinhada ao projeto da Sprint 2</h1>
+<p><span class="tt"><a class="el" href="services_8h.html" title="Interfaces da API e tipos de entrada.">include/services.h</a></span> e <span class="tt"><a class="el" href="services_8cpp.html" title="Implementacao das interfaces de servico.">src/services.cpp</a></span> separam as operacoes entre as classes:</p>
+<ul>
+<li><span class="tt"><a class="el" href="class_servico_autenticacao.html" title="Interface para abrir e encerrar sessoes.">ServicoAutenticacao</a></span>: <span class="tt">entrar</span>, <span class="tt">sair</span>.</li>
+<li><span class="tt"><a class="el" href="class_servico_acesso.html" title="Interface auxiliar para verificar autorizacao.">ServicoAcesso</a></span>: <span class="tt">permitir</span> (verificacao auxiliar; cada operacao tambem valida a sessao).</li>
+<li><span class="tt"><a class="el" href="class_servico_ofertas.html" title="Interface de publicacao, pesquisa e detalhamento de ofertas (SB01 e SB02).">ServicoOfertas</a></span>: <span class="tt">publicar</span>, <span class="tt">consultar</span>, <span class="tt">detalhes</span>.</li>
+<li><span class="tt"><a class="el" href="class_servico_reservas.html" title="Interface de reserva e cancelamento de unidades (SB03 e SB04).">ServicoReservas</a></span>: <span class="tt">reservar</span>, <span class="tt">minhasReservas</span>, <span class="tt">cancelar</span>.</li>
+<li><span class="tt"><a class="el" href="class_servico_retiradas.html" title="Interface de consulta e confirmacao de retirada (SB05).">ServicoRetiradas</a></span>: <span class="tt">listar</span>, <span class="tt">confirmar</span>.</li>
+<li><span class="tt"><a class="el" href="class_servico_indicadores.html" title="Interface de consulta de indicadores do restaurante (SB06).">ServicoIndicadores</a></span>: <span class="tt">obterResumo</span>.</li>
+</ul>
+<p>Os tipos <span class="tt"><a class="el" href="struct_dados_oferta.html" title="Parametros para publicacao de uma oferta comercial.">DadosOferta</a></span>, <span class="tt"><a class="el" href="struct_filtro_oferta.html" title="Termo opcional para pesquisa no catalogo.">FiltroOferta</a></span>, <span class="tt"><a class="el" href="struct_dados_retirada.html" title="Quantidade, peso e valor efetivamente registrados na retirada.">DadosRetirada</a></span>, <span class="tt"><a class="el" href="class_sessao.html" title="Identificacao temporaria de um usuario autenticado.">Sessao</a></span>, <span class="tt"><a class="el" href="services_8h.html#a69f7930bb5e89464aa82db2f3ee8bde1" title="Alias para colecoes retornadas pelos servicos.">Colecao</a>&lt;T&gt;</span> e <span class="tt"><a class="el" href="struct_resumo_indicadores.html" title="Totais de peso e receita de retiradas confirmadas.">ResumoIndicadores</a></span> seguem os contratos simplificados do Projeto de API da Sprint 2. Todos os servicos recebem o mesmo <span class="tt"><a class="el" href="class_sistema_save_food.html" title="Centraliza o dominio em memoria e protege as operacoes com mutex.">SistemaSaveFood</a></span> para compartilhar os dados e uma <span class="tt"><a class="el" href="class_sessao.html" title="Identificacao temporaria de um usuario autenticado.">Sessao</a></span> para aplicar o perfil de acesso. Os testes funcionais agora exercitam os servicos da API.</p>
+<p>O metodo <span class="tt">detalhes</span> foi incluido para consultar uma oferta pelo ID. Os dados continuam em memoria para facilitar a demonstracao da Sprint 3; persistencia em banco ou arquivo sera uma etapa posterior.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
+Testes funcionais</h1>
+<p>Cada fluxo e implementado em uma funcao separada, declarada em <span class="tt"><a class="el" href="funcional__tests_8h.html" title="Declaracoes dos tres testes funcionais da Sprint 3.">test/funcional/funcional_tests.h</a></span> e definida em <span class="tt"><a class="el" href="funcional__tests_8cpp.html" title="Cenarios de aceitacao de SB03, SB04 e SB05.">test/funcional/funcional_tests.cpp</a></span>:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Funcao  </th><th class="markdownTableHeadNone">Caso de uso / PDF  </th><th class="markdownTableHeadNone">CT-01  </th><th class="markdownTableHeadNone">CT-02  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="funcional__tests_8cpp.html#ad56102af09b794994db9b78067142d95" title="SB03: reserva valida e recusa por saldo insuficiente (CT-01 e CT-02).">testeReservarQuantidade</a></span>  </td><td class="markdownTableBodyNone">SB03, p. 6  </td><td class="markdownTableBodyNone"><a class="el" href="class_reserva.html" title="Reserva de unidades de uma oferta e registro da eventual retirada.">Reserva</a> 2 de 5; saldo 3 e situacao Pendente.  </td><td class="markdownTableBodyNone">Com saldo 1, reserva de 2 recusada sem novo registro.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="funcional__tests_8cpp.html#a4f5c6150f466ee0c5e588d8d0267d9f8" title="SB04: cancelamento com reposicao do saldo e recusa de repeticao (CT-01 e CT-02).">testeCancelarReserva</a></span>  </td><td class="markdownTableBodyNone">SB04, p. 7  </td><td class="markdownTableBodyNone"><a class="el" href="class_reserva.html" title="Reserva de unidades de uma oferta e registro da eventual retirada.">Reserva</a> propria de 2 cancelada; saldo 3 volta a 5.  </td><td class="markdownTableBodyNone">Novo cancelamento recusado; saldo continua 5.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="funcional__tests_8cpp.html#a8860b7dcbe46847d791ab7759e619dbd" title="SB05: retirada valida e acesso de gerente de outro restaurante negado (CT-01 e CT-02).">testeConfirmarRetirada</a></span>  </td><td class="markdownTableBodyNone">SB05, p. 8  </td><td class="markdownTableBodyNone">Gerente A confirma 2 unidades, 1 kg e R$ 24; situacao Retirada.  </td><td class="markdownTableBodyNone">Gerente A nao confirma reserva do restaurante B; dados intactos.  </td></tr>
+</table>
+<p>Cada funcao monta seu proprio sistema com dados de demonstracao. Os IDs sao obtidos da API, em vez de depender dos IDs ilustrativos do PDF. As verificacoes usam os servicos publicos, incluindo a consulta de saldo, sem alterar atributos internos. Falhas retornam codigo 1 no main; sucesso retorna 0. As tres funcoes sao executadas mesmo quando uma delas falha.</p>
+<p>A escolha destes tres casos nao elimina os outros servicos do produto, mas esta suite funcional nao executa separadamente SB01, SB02, SB06 ou o teste concorrente da secao 3.3 do PDF.</p>
+<p>Os testes unitarios verificam copia, atribuicao e validacoes das classes. Os tres programas (<span class="tt"><a class="el" href="src_2main_8cpp.html" title="Ponto de entrada da demonstracao do SaveFood.">src/main.cpp</a></span>, <span class="tt"><a class="el" href="test_2unit_2main_8cpp.html" title="Ponto de entrada dos testes unitarios.">test/unit/main.cpp</a></span> e <span class="tt"><a class="el" href="test_2funcional_2main_8cpp.html" title="Ponto de entrada dos testes funcionais.">test/funcional/main.cpp</a></span>) sao compilados separadamente.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
+Contas ficticias de demonstracao</h1>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"><a class="el" href="model_8h.html#ad753c9760ea01294f409018f837341b4">Papel</a>  </th><th class="markdownTableHeadNone">E-mail  </th><th class="markdownTableHeadNone">Senha  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Gerente (restaurante 1)  </td><td class="markdownTableBodyNone"><span class="tt">gerente@savefood.demo</span>  </td><td class="markdownTableBodyNone"><span class="tt">gerente123</span>  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Consumidor 1  </td><td class="markdownTableBodyNone"><span class="tt">consumidor@savefood.demo</span>  </td><td class="markdownTableBodyNone"><span class="tt">consumidor123</span>  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Consumidor 2  </td><td class="markdownTableBodyNone"><span class="tt">consumidor2@savefood.demo</span>  </td><td class="markdownTableBodyNone"><span class="tt">consumidor123</span>  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Gerente (restaurante 2)  </td><td class="markdownTableBodyNone"><span class="tt">gerente2@savefood.demo</span>  </td><td class="markdownTableBodyNone"><span class="tt">gerente123</span>  </td></tr>
+</table>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md12"></a>
+Limites desta versao</h1>
+<ul>
+<li>Dados em memoria: o programa e uma demonstracao funcional, sem banco de dados.</li>
+<li>O hash simples de senha serve apenas para contas ficticias do exercicio; em producao deve ser substituido por Argon2id, scrypt ou PBKDF2.</li>
+<li>Pagamento e informado pelo gerente na retirada, sem integracao financeira.</li>
+<li>O peso efetivamente entregue e informado pelo gerente na confirmacao. Retiradas parciais sao recusadas enquanto a regra nao for definida.</li>
+<li>Doacoes, expiracao e cadastro aberto estao fora do MVP implementado.</li>
+<li>Dados de retirada sao armazenados na propria <a class="el" href="class_reserva.html" title="Reserva de unidades de uma oferta e registro da eventual retirada.">Reserva</a>, como na arquitetura existente, sem uma classe Retirada separada.</li>
+</ul>
+<p>Os testes usam exclusivamente dados de demonstracao. </p>
+</div></div><!-- PageDoc -->
+<a href="doxygen_crawl.html"></a>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Gerado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
