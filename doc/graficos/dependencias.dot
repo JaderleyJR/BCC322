@@ -1,0 +1,49 @@
+digraph Dependencias {
+  graph [rankdir=LR, bgcolor="white", pad=.3, nodesep=.28, ranksep=.7, fontname="Arial", label="SaveFood - Dependencias entre arquivos", labelloc=t, fontsize=18];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, color="#64748b", fillcolor="#f1f5f9"];
+  edge [color="#64748b", arrowsize=.65];
+  subgraph cluster_include { label="Cabecalhos da API"; color="#cbd5e1";
+    "include/flow.h" [label="flow.h", fillcolor="#dbeafe"];
+    "include/model.h" [label="model.h", fillcolor="#dbeafe"];
+    "include/services.h" [label="services.h", fillcolor="#dbeafe"];
+    "include/system.h" [label="system.h", fillcolor="#dbeafe"];
+  }
+  subgraph cluster_src { label="Codigo do produto"; color="#cbd5e1";
+    "src/flow.cpp" [label="flow.cpp", fillcolor="#f1f5f9"];
+    "src/main.cpp" [label="main.cpp", fillcolor="#f1f5f9"];
+    "src/model.cpp" [label="model.cpp", fillcolor="#f1f5f9"];
+    "src/services.cpp" [label="services.cpp", fillcolor="#f1f5f9"];
+    "src/system.cpp" [label="system.cpp", fillcolor="#f1f5f9"];
+  }
+  subgraph cluster_test_funcional { label="Testes funcionais"; color="#cbd5e1";
+    "test/funcional/funcional_tests.cpp" [label="funcional_tests.cpp", fillcolor="#dcfce7"];
+    "test/funcional/main.cpp" [label="main.cpp", fillcolor="#dcfce7"];
+    "test/funcional/funcional_tests.h" [label="funcional_tests.h", fillcolor="#dcfce7"];
+  }
+  subgraph cluster_test_unit { label="Testes unitarios"; color="#cbd5e1";
+    "test/unit/main.cpp" [label="main.cpp", fillcolor="#fef3c7"];
+    "test/unit/unit_tests.cpp" [label="unit_tests.cpp", fillcolor="#fef3c7"];
+    "test/unit/unit_tests.h" [label="unit_tests.h", fillcolor="#fef3c7"];
+  }
+  "include/flow.h" -> "include/services.h";
+  "include/services.h" -> "include/system.h";
+  "include/system.h" -> "include/model.h";
+  "src/flow.cpp" -> "include/flow.h";
+  "src/main.cpp" -> "include/flow.h";
+  "src/model.cpp" -> "include/model.h";
+  "src/services.cpp" -> "include/services.h";
+  "src/system.cpp" -> "include/system.h";
+  "test/funcional/funcional_tests.cpp" -> "test/funcional/funcional_tests.h";
+  "test/funcional/funcional_tests.cpp" -> "include/services.h";
+  "test/funcional/main.cpp" -> "test/funcional/funcional_tests.h";
+  "test/funcional/main.cpp" -> "include/model.h";
+  "test/funcional/main.cpp" -> "include/system.h";
+  "test/funcional/main.cpp" -> "include/flow.h";
+  "test/unit/main.cpp" -> "test/unit/unit_tests.h";
+  "test/unit/main.cpp" -> "include/model.h";
+  "test/unit/main.cpp" -> "include/system.h";
+  "test/unit/unit_tests.cpp" -> "test/unit/unit_tests.h";
+  "test/unit/unit_tests.cpp" -> "include/model.h";
+  "test/unit/unit_tests.cpp" -> "include/system.h";
+  "test/unit/unit_tests.cpp" -> "include/services.h";
+}
